@@ -1,7 +1,7 @@
-#====================Directories===================================
+#====================Directories=================================== 
 STM_STARTUP_DIR = Platform
 STM_INCLUDE_DIR = Cmsis
-LDSCRIPT = $(STM_STARTUP_DIR)/STM32F446RETx_FLASH.ld
+LDSCRIPT = $(STM_STARTUP_DIR)/STM32G431RBTX_FLASH.ld
  
 BUILD_DIR = build
 OBJ_DIR = $(BUILD_DIR)/obj
@@ -17,11 +17,10 @@ SIZE = arm-none-eabi-size
 #=====================Files======================================
 TARGET  = foc
  
-SOURCES = main.c
-          
+SOURCES = main.c\
+		  $(STM_STARTUP_DIR)/system_stm32g4xx.c
  
-ASM_SRCS = $(STM_STARTUP_DIR)/startup_stm32f446xx.s\
-		   $(STM_STARTUP_DIR)/system_stm32g4xx.c
+ASM_SRCS = $(STM_STARTUP_DIR)/startup_stm32g431xx.s\
 
 vpath %.c . \
 
@@ -33,13 +32,13 @@ OBJECTS = $(C_OBJS) $(ASM_OBJS)
 #=====================Flags==================================
 MCU = -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard
 WFLAGS = -Wall -Wextra  -Wshadow
-CFLAGS = $(MCU) -O0 -g3 -ggdb $(WFLAGS) -DSTM32G431xx $(addprefix -I,$(INCLUDE_DIRS    ))
+CFLAGS = $(MCU) -O0 -g3 -ggdb $(WFLAGS) -DSTM32G431xx $(addprefix -I,$(INCLUDE_DIRS))
 LDFLAGS = $(MCU) -T $(LDSCRIPT) --specs=nosys.specs --specs=nano.specs
 LDFLAGS += -Wl,--gc-sections
 LDFLAGS += -Wl,--print-memory-usage
 
 #Tell Make where to find .c and .s source files
-VPATH = src:$(STM_STARTUP_DIR)
+VPATH = .:src:$(STM_STARTUP_DIR)
 
 all: $(BUILD_DIR)/$(TARGET).elf $(BIN_DIR)/$(TARGET).bin
 
