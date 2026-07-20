@@ -1,11 +1,11 @@
 #include "mcu.h"
 
-static Mcu_ConfigType* Mcu_ConfigPtr = NULL_PTR;
+static const Mcu_ConfigType* Mcu_ConfigPtr = NULL_PTR;
 
 static void Mcu_EnableHSE(void);
-static void Mcu_PllCofiguration(const Mcu_PllConfigtype* PllSetting);
-static void Mcu_PheripherialConfiguration(const Mcu_PeriphConfigType* PeriphSetting);
-static void Mcu_FlashLatencyConfiguration(McuFlashLatencyWSType FlashSetting);
+static void Mcu_PllCofiguration(const Mcu_PllConfigType* PllSetting);
+static void Mcu_PheripherialConfiguration(const Mcu_PeripherialConfigType* PeriphSetting);
+static void Mcu_FlashLatencyConfiguration(Mcu_FlashLatencyWSType FlashSetting);
 static void Mcu_PwrRangeConfiguration(Mcu_PwrRangeType PwrRangeSetting);
 
 void Mcu_Init(const Mcu_ConfigType *ConfigPtr){
@@ -20,14 +20,14 @@ Std_ReturnType Mcu_InitClock(Mcu_ClockType ClockSetting){
 		return E_NOT_OK;
 	}
 	
-	const Mcu_ClockSettingConfigType* ClkSetting = &Mcu_ConfigPtr->Mcu_ClockSettingType[ClockSetting];
+	const Mcu_ClockSettingsConfigType* ClkSetting = &Mcu_ConfigPtr->ClockSettingsConfig[ClockSetting];
 	
 
 	Mcu_EnableHSE();
 	Mcu_FlashLatencyConfiguration(ClkSetting->FlashLatencyWS);
 	Mcu_PwrRangeConfiguration(ClkSetting->PwrRange);
 	Mcu_PllCofiguration(ClkSetting->PllConfig);	
-	Mcu_PheripherialConfiguration(ClkSetting->PeriphClkconfig);
+	Mcu_PheripherialConfiguration(ClkSetting->PeriphClkConfig);
 
 	return E_OK;
 }
@@ -55,7 +55,7 @@ static void Mcu_EnableHSE(void){
 	while (!(RCC->CR & RCC_CR_HSERDY)) { }         
 }
 
-static void Mcu_PllCofiguration(const Mcu_PllConfigtype* PllSetting){
+static void Mcu_PllCofiguration(const Mcu_PllConfigType* PllSetting){
 	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLM_Msk << RCC_PLLCFGR_PLLM_Pos);
 	RCC->PLLCFGR |= (PllSetting->PllM << RCC_PLLCFGR_PLLM_Pos);
 
@@ -107,7 +107,7 @@ static void Mcu_PllCofiguration(const Mcu_PllConfigtype* PllSetting){
 
 }
 
-static void Mcu_PheripherialConfiguration(const Mcu_PeriphConfigType* PeriphSetting){
+static void Mcu_PheripherialConfiguration(const Mcu_PeripherialConfigType* PeriphSetting){
 	RCC->CFGR &= ~(RCC_CFGR_PPRE1 << RCC_CFGR_PPRE1_Pos);		
 	RCC->CFGR |= (PeriphSetting->APB1_PRE << RCC_CFGR_PPRE1_Pos);		
 	
@@ -118,8 +118,8 @@ static void Mcu_PheripherialConfiguration(const Mcu_PeriphConfigType* PeriphSett
 	RCC->CFGR |= (PeriphSetting->AHB_PRE << RCC_CFGR_HPRE_Pos);		
 }
 
-static void Mcu_FlashLatencyConfiguration(McuFlashLatencyWSType FlashSetting){
-	FLASH->ARC |= (FlashSetting << FLASH_ARC_LATENCY_Pos);
+static void Mcu_FlashLatencyConfiguration(Mcu_FlashLatencyWSType FlashSetting){
+	FLASH->ACR |= (FlashSetting << FLASH_ACR_LATENCY_Pos);
 }
 
 static void Mcu_PwrRangeConfiguration(Mcu_PwrRangeType PwrRangeSetting){

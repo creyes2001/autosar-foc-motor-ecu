@@ -13,9 +13,9 @@ static const Mcu_PllConfigType Mcu_PllConfig_0 = {
 }
 
 static const Mcu_PeripherialConfigType Mcu_PeriphClkConfig_0 = {
-	APB1_PRE = 0;
-	APB2_PRE = 0;
-	AHB_PRE = 0;
+	.APB1_PRE = 0;
+	.APB2_PRE = 0;
+	.AHB_PRE = 0;
 }
 
 static const Mcu_ClockSettingsConfigType McuClockSettingConfig[] = {
@@ -24,7 +24,7 @@ static const Mcu_ClockSettingsConfigType McuClockSettingConfig[] = {
 		.FlashLatencyWS = 4;
 		.PwrRange = MCU_PWR_RANGE_1;
 		.PllConfig = &Mcu_PllConfig_0;
-		.PeriphClkConfigType = Mcu_PeriphClkConfig_0;
+		.PeriphClkConfig = Mcu_PeriphClkConfig_0;
 	}
 }
 

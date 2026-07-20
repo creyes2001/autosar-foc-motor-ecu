@@ -3,6 +3,7 @@
 
 #include "Platform_Types.h"
 #include "Std_Types.h"
+#include "stm32g431xx.h"
 
 typedef uint8 Mcu_ClockType;
 typedef uint8 Mcu_FlashLatencyWSType;
@@ -62,7 +63,7 @@ typedef enum{
 }Mcu_SysclkSwType;
 
 typedef enum{
-	MCU_HSE_SWS,
+MCU_HSE_SWS,
 	MCU_HSI16_SWS,
 	MCU_PLL_SWS
 }Mcu_SysclkSwStatusType;
@@ -74,7 +75,7 @@ typedef struct{
 	uint8  PllP;
 	uint8  PllQ;
 	Mcu_PllOutputStateType PllROutputState;
-	Mcu_PllOutputStateType PllQutputState;
+	Mcu_PllOutputStateType PllQOutputState;
 	Mcu_PllOutputStateType PllPOutputState;
 	Mcu_ClockSourceType 	PllInputSource;
 }Mcu_PllConfigType;
@@ -88,13 +89,13 @@ typedef struct{
 typedef struct{
 	Mcu_ClockSourceType 			 SysClkSource;
 	Mcu_FlashLatencyWSType	 		 FlashLatencyWS;
-	Mcu_Pwr_Range_Type				 PwrRange;
+	Mcu_PwrRangeType				 PwrRange;
 	const Mcu_PllConfigType*   		 PllConfig;
-	const Mcu_PeripherialConfigType* PeriphClckConfigType;
+	const Mcu_PeripherialConfigType* PeriphClkConfig;
 }Mcu_ClockSettingsConfigType;
 
 typedef struct{
-	const Mcu_ClockSettingsConfigType ClockSettingsConfig;
+	const Mcu_ClockSettingsConfigType* ClockSettingsConfig;
 	uint8 Mcu_NumberOfClockSettings;
 }Mcu_ConfigType;
 
