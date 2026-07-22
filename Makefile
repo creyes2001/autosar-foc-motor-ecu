@@ -8,6 +8,8 @@ OBJ_DIR = $(BUILD_DIR)/obj
 BIN_DIR = $(BUILD_DIR)/bin
 
 INCLUDE_DIRS = $(STM_INCLUDE_DIR)\
+			   ./Mcal/Mcu\
+			   ./Common
  
 #=====================TOOLCHAIN=================================
 CC = arm-none-eabi-gcc
@@ -18,11 +20,14 @@ SIZE = arm-none-eabi-size
 TARGET  = foc
  
 SOURCES = main.c\
+		  Mcal/Mcu/mcu.c\
+		  Mcal/Mcu/mcu_cfg.c\
 		  $(STM_STARTUP_DIR)/system_stm32g4xx.c
  
 ASM_SRCS = $(STM_STARTUP_DIR)/startup_stm32g431xx.s\
 
 vpath %.c . \
+	Mcal/Mcu
 
 C_OBJS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(notdir $(SOURCES)))
 ASM_OBJS = $(patsubst %.s,$(OBJ_DIR)/%.o,$(notdir $(ASM_SRCS)))
