@@ -99,4 +99,6 @@ typedef struct{
 	uint8 Mcu_NumberOfClockSettings;
 }Mcu_ConfigType;
 
+extern const Mcu_ConfigType Mcu_Config_0;
+
 #endif //MCU_CFG_H
