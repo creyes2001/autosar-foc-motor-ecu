@@ -123,6 +123,7 @@ static void Mcu_FlashLatencyConfiguration(Mcu_FlashLatencyWSType FlashSetting){
 }
 
 static void Mcu_PwrRangeConfiguration(Mcu_PwrRangeType PwrRangeSetting){
+	RCC->APB1ENR1 |= RCC_APB1ENR1_PWREN;
 	PWR->CR1 &= ~(PWR_CR1_VOS_Msk << PWR_CR1_VOS_Pos);
 	PWR->CR1 |= (PwrRangeSetting << PWR_CR1_VOS_Pos); 
 }
