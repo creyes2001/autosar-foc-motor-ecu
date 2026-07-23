@@ -34,7 +34,7 @@ Std_ReturnType Mcu_InitClock(Mcu_ClockType ClockSetting){
 
 
 Std_ReturnType Mcu_DistributePllClock(void){	
-	if(!(RCC->CR & RCC_CR_PLLRDY)){	
+	if(Mcu_GetPllStatus != MCU_PLL_LOCKED){	
 		return E_NOT_OK;
 	}
 	RCC->CFGR |= RCC_CFGR_SW_PLL; 
