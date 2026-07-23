@@ -37,7 +37,6 @@ Std_ReturnType Mcu_DistributePllClock(void){
 	if(!(RCC->CR & RCC_CR_PLLRDY)){	
 		return E_NOT_OK;
 	}
-	RCC->CFGR &= ~RCC_CFGR_SW_Msk;
 	RCC->CFGR |= RCC_CFGR_SW_PLL; 
 	while((RCC->CFGR & RCC_CFGR_SWS) !=  RCC_CFGR_SWS_PLL);
 	return E_OK;
@@ -102,8 +101,7 @@ static void Mcu_PllCofiguration(const Mcu_PllConfigType* PllSetting){
 	}
 
 	RCC->CR |= RCC_CR_PLLON;
-	Mcu_PllStatusType PllStatus;
-    while (PllStatus != MCU_PLL_LOCKED){ }
+    while (Mcu_GetPllStatus() != MCU_PLL_LOCKED){ }
 
 }
 
