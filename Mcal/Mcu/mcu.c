@@ -24,8 +24,8 @@ Std_ReturnType Mcu_InitClock(Mcu_ClockType ClockSetting){
 	
 
 	Mcu_EnableHSE();
-	Mcu_FlashLatencyConfiguration(ClkSetting->FlashLatencyWS);
 	Mcu_PwrRangeConfiguration(ClkSetting->PwrRange);
+	Mcu_FlashLatencyConfiguration(ClkSetting->FlashLatencyWS);
 	Mcu_PllCofiguration(ClkSetting->PllConfig);	
 	Mcu_PheripherialConfiguration(ClkSetting->PeriphClkConfig);
 
@@ -55,6 +55,10 @@ static void Mcu_EnableHSE(void){
 }
 
 static void Mcu_PllCofiguration(const Mcu_PllConfigType* PllSetting){
+	
+	RCC->CR &= ~RCC_CR_PLLON;
+    while (Mcu_GetPllStatus() != MCU_PLL_UNLOCKED){ }
+
 	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLM_Msk << RCC_PLLCFGR_PLLM_Pos);
 	RCC->PLLCFGR |= (PllSetting->PllM << RCC_PLLCFGR_PLLM_Pos);
 
@@ -71,24 +75,24 @@ static void Mcu_PllCofiguration(const Mcu_PllConfigType* PllSetting){
 	RCC->PLLCFGR |= (PllSetting->PllQ << RCC_PLLCFGR_PLLQ_Pos);
 
 	if(PllSetting->PllROutputState == MCU_PLL_ENABLED){
-		RCC->PLLCFGR |= (RCC_PLLCFGR_PLLREN << RCC_PLLCFGR_PLLREN_Pos);	
+		RCC->PLLCFGR |= RCC_PLLCFGR_PLLREN;	
 	}
 	else{
-		RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLREN << RCC_PLLCFGR_PLLREN_Pos);	
+		RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLREN;	
 	}
 
 	if(PllSetting->PllQOutputState == MCU_PLL_ENABLED){
-		RCC->PLLCFGR |= (RCC_PLLCFGR_PLLQEN << RCC_PLLCFGR_PLLQEN_Pos);	
+		RCC->PLLCFGR |= RCC_PLLCFGR_PLLQEN;	
 	}
 	else{
-		RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLQEN << RCC_PLLCFGR_PLLQEN_Pos);	
+		RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLQEN;	
 	}
 	
 	if(PllSetting->PllPOutputState == MCU_PLL_ENABLED){
-		RCC->PLLCFGR |= (RCC_PLLCFGR_PLLPEN << RCC_PLLCFGR_PLLPEN_Pos);	
+		RCC->PLLCFGR |= RCC_PLLCFGR_PLLPEN;	
 	}
 	else{
-		RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLPEN << RCC_PLLCFGR_PLLPEN_Pos);	
+		RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLPEN;	
 	}
 
 	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLSRC_Msk << RCC_PLLCFGR_PLLSRC_Pos);
@@ -122,6 +126,7 @@ static void Mcu_FlashLatencyConfiguration(Mcu_FlashLatencyWSType FlashSetting){
 
 static void Mcu_PwrRangeConfiguration(Mcu_PwrRangeType PwrRangeSetting){
 	RCC->APB1ENR1 |= RCC_APB1ENR1_PWREN;
+	(void)RCC->APB1ENR1;
 	PWR->CR1 &= ~(PWR_CR1_VOS_Msk << PWR_CR1_VOS_Pos);
 	PWR->CR1 |= (PwrRangeSetting << PWR_CR1_VOS_Pos); 
 }
