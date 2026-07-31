@@ -42,6 +42,11 @@ typedef struct {
 	Port_PinResistorType	Pin_ResistorType;
 	boolean					DirectionChangable;
 	boolean					ModeChangable;
+}Port_ConfigDataType;
+
+typedef struct {
+	Port_ConfigDataType* Port_ConfigData;
+	uint32 size;
 }Port_ConfigType;
 
 extern const Port_ConfigType Port_Config[];
