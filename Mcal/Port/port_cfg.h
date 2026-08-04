@@ -20,8 +20,9 @@
 #define PORT_PIN_MODE_AF13 ((Port_PinModeType)0x0D)
 #define PORT_PIN_MODE_AF14 ((Port_PinModeType)0x0E)
 #define PORT_PIN_MODE_AF15 ((Port_PinModeType)0x0F)
-#define PORT_PIN_MODE_DIO ((Port_PinModeType)0x10)
-#define PORT_PIN_MODE_ANALOG ((Port_PinModeType)0x11)
+#define PORT_PIN_MODE_DI ((Port_PinModeType)0x10)
+#define PORT_PIN_MODE_DO ((Port_PinModeType)0x11)
+#define PORT_PIN_MODE_ANALOG ((Port_PinModeType)0x12)
 
 #define PORT_A_PIN_0 ((Port_PinType)0x00)
 #define PORT_A_PIN_1 ((Port_PinType)0x01)
