@@ -7,8 +7,8 @@
 //Ports table
 //Modes table
 
-typedef Port_PinType uint8;
-typedef Port_PinModeType uint8;
+typedef uint8 Port_PinType;
+typedef uint8 Port_PinModeType;
 
 typedef enum {
 	PORT_PIN_IN = 0,
@@ -38,7 +38,7 @@ typedef struct {
 	Port_PinModeType		Pin_Mode;
 	Port_PinDirectionType	Pin_Direction;
 	Port_PinSpeedType		Pin_Speed;
-	Port_PinOutpuType		Pin_OutputType;
+	Port_PinOutputType		Pin_OutputType;
 	Port_PinResistorType	Pin_ResistorType;
 	boolean					DirectionChangable;
 	boolean					ModeChangable;
