@@ -11,20 +11,21 @@ void Port_Init(const Port_ConfigType* ConfigPtr){
 	
 	Port_ConfigDataType* ConfigData = ConfigPtr->Port_ConfigData;
 	for(uint32 i = 0; i < ConfigPtr->size; i++){
-		Port_SetPinMode(ConfigData[i]->PinId,ConfigData[i]->Pin_Mode);
-		Port_SetPinSpeed(ConfigData[i]->PinId,ConfigData[i]->Pin_Speed);
-		Port_SetOutputType(ConfigData[i]->PinId,ConfigData[i]->Pin_OutputType);
-		Port_SetResistorType(ConfigData[i]->PinId,ConfigData[i]->Pin_ResistorType);
+		Port_SetPinMode(ConfigData[i].PinId,ConfigData[i].Pin_Mode);
+		Port_SetPinSpeed(ConfigData[i].PinId,ConfigData[i].Pin_Speed);
+		Port_SetOutputType(ConfigData[i].PinId,ConfigData[i].Pin_OutputType);
+		Port_SetResistorType(ConfigData[i].PinId,ConfigData[i].Pin_ResistorType);
 		
-		if(!ConfigData[i]->DirectionChangable || ConfigData[i]->ModeCangable){
-				Port_LockPinType(ConfigData[i]->PinId);
+		if(!ConfigData[i].DirectionChangable || ConfigData[i].ModeChangable){
+				Port_LockPinType(ConfigData[i].PinId);
 		}
 	}
 
 }
 
 void Port_SetPinDirection(Port_PinType Pin, Port_PinDirectionType Direction){
-	uint8 pin = Port_GetPiNumber(Pin);
+	uint8 pin = Port_GetPinNumber(Pin);
+	GPIO_TypeDef* port = Port_GetGpioBase(Pin);
 	
 	if(Direction == PORT_PIN_IN){
 		port->MODER &= ~(3 << (pin * 2));
@@ -37,12 +38,12 @@ void Port_SetPinDirection(Port_PinType Pin, Port_PinDirectionType Direction){
 
 
 void Port_SetPinMode(Port_PinType Pin, Port_PinModeType Mode){
-	uint8 pin = Port_GetPiNumber(Pin);
-	GPIO_TypeDef* port = Port_GetPinBase(Pin);
+	uint8 pin = Port_GetPinNumber(Pin);
+	GPIO_TypeDef* port = Port_GetGpioBase(Pin);
 	//PORT_PIN_MODE_AF0 must be 0
 	port->MODER &= ~(3 << (pin * 2));
 	
-	if(Mode >= PORT_PIN_MODE_AF0 && Mode <= PORT_PIN_MODE_AF15){
+	if(Mode <= PORT_PIN_MODE_AF15){
 		port->MODER |= (2 << (pin * 2));
 		
 		if(Mode <= PORT_PIN_MODE_AF7){
@@ -108,8 +109,8 @@ static GPIO_TypeDef* Port_GetGpioBase(Port_PinType Pin){
 }
 
 static void Port_SetPinSpeed(Port_PinType Pin,Port_PinSpeedType speed){
-	uint8 pin = Port_GetPiNumber(Pin);
-	GPIO_TypeDef* port = Port_GetPinBase(Pin);
+	uint8 pin = Port_GetPinNumber(Pin);
+	GPIO_TypeDef* port = Port_GetGpioBase(Pin);
 	port->OSPEEDR &= ~(3 << 2 * pin);
 	switch(speed){
 		case PORT_PIN_LOW_SPEED:
@@ -135,11 +136,11 @@ static void Port_SetPinSpeed(Port_PinType Pin,Port_PinSpeedType speed){
 }
 
 static void Port_SetOutputType(Port_PinType Pin,Port_PinOutputType outputType){
-	uint8 pin = Port_GetPiNumber(Pin);
-	GPIO_TypeDef* port = Port_GetPinBase(Pin);
+	uint8 pin = Port_GetPinNumber(Pin);
+	GPIO_TypeDef* port = Port_GetGpioBase(Pin);
 	port->OTYPER &= ~(1 << pin);
 	
-	if(outputType == PORT_PIN_PUSH_PULL){
+	if(outputType == PORT_PIN_OUT_PUSH_PULL){
 		port->OTYPER &= ~(1 << pin);
 	}
 	else{
@@ -147,9 +148,9 @@ static void Port_SetOutputType(Port_PinType Pin,Port_PinOutputType outputType){
 	}
 }
 
-static void Port_SetResistorType(Port_PinType Pi,nPort_PinResistorType resistorType){
-	uint8 pin = Port_GetPiNumber(Pin);
-	GPIO_TypeDef* port = Port_GetPinBase(Pin);
+static void Port_SetResistorType(Port_PinType Pin,Port_PinResistorType resistorType){
+	uint8 pin = Port_GetPinNumber(Pin);
+	GPIO_TypeDef* port = Port_GetGpioBase(Pin);
 	port->PUPDR &= ~(3 << (2 * pin));
 
 	switch(resistorType){
@@ -168,8 +169,8 @@ static void Port_SetResistorType(Port_PinType Pi,nPort_PinResistorType resistorT
 }
 
 static void Port_LockPinType(Port_PinType Pin){
-	uint8 pin = Port_GetPiNumber(Pin);
-	GPIO_TypeDef* port = Port_GetPinBase(Pin);
+	uint8 pin = Port_GetPinNumber(Pin);
+	GPIO_TypeDef* port = Port_GetGpioBase(Pin);
 
 	uint32 lck = 0x00000000;
 	
