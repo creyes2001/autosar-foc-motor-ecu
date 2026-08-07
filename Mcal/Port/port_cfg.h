@@ -122,6 +122,6 @@ typedef struct {
 	uint32 size;
 }Port_ConfigType;
 
-extern const Port_ConfigType Port_Config[];
+extern const Port_ConfigDataType Port_Config[];
 
 #endif //PORT_CFG_H
