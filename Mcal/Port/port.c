@@ -9,7 +9,7 @@ static void Port_LockPinType(Port_PinType Pin);
 
 void Port_Init(const Port_ConfigType* ConfigPtr){
 	
-	Port_ConfigDataType* ConfigData = ConfigPtr->Port_ConfigData;
+	const Port_ConfigDataType* ConfigData = ConfigPtr->Port_ConfigData;
 	for(uint32 i = 0; i < ConfigPtr->size; i++){
 		Port_SetPinMode(ConfigData[i].PinId,ConfigData[i].Pin_Mode);
 		Port_SetPinSpeed(ConfigData[i].PinId,ConfigData[i].Pin_Speed);
