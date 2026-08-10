@@ -7,7 +7,7 @@ const Port_ConfigDataType Port_CfgData[] = {
 		.Pin_Direction = PORT_PIN_OUT,
 		.Pin_Speed = PORT_PIN_MEDIUM_SPEED,
 		.Pin_OutputType = PORT_PIN_OUT_OPEN_DRAIN,
-		.Pin_ResistorType = PORT_PIN_RESISTOR_DISABLE,
+		.Pin_ResistorType = PORT_PIN_RESISTOR_PULLUP,
 		.DirectionChangable = TRUE,
 		.ModeChangable = TRUE
 	}
