@@ -1,6 +1,6 @@
 #include "port_cfg.h"
 
-const Port_ConfigDataType Port_Config[] = {
+const Port_ConfigDataType Port_CfgData[] = {
 	{
 		.PinId = PORT_A_PIN_5,
 		.Pin_Mode = PORT_PIN_MODE_DO,
@@ -11,4 +11,9 @@ const Port_ConfigDataType Port_Config[] = {
 		.DirectionChangable = TRUE,
 		.ModeChangable = TRUE
 	}
+};
+
+const Port_ConfigType Port_Config = {
+	.Port_ConfigData = Port_CfgData,
+	.size = 1
 };
