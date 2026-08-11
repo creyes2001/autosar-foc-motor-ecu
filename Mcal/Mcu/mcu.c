@@ -59,19 +59,19 @@ static void Mcu_PllCofiguration(const Mcu_PllConfigType* PllSetting){
 	RCC->CR &= ~RCC_CR_PLLON;
     while (Mcu_GetPllStatus() != MCU_PLL_UNLOCKED){ }
 
-	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLM_Msk << RCC_PLLCFGR_PLLM_Pos);
+	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLM);
 	RCC->PLLCFGR |= (PllSetting->PllM << RCC_PLLCFGR_PLLM_Pos);
 
-	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLN_Msk << RCC_PLLCFGR_PLLN_Pos);
+	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLN);
 	RCC->PLLCFGR |= (PllSetting->PllN << RCC_PLLCFGR_PLLN_Pos);
 
-	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLR_Msk << RCC_PLLCFGR_PLLR_Pos);
+	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLR);
 	RCC->PLLCFGR |= (PllSetting->PllR << RCC_PLLCFGR_PLLR_Pos);
 
-	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLP_Msk << RCC_PLLCFGR_PLLP_Pos);
+	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLP);
 	RCC->PLLCFGR |= (PllSetting->PllP << RCC_PLLCFGR_PLLP_Pos);
 	
-	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLQ_Msk << RCC_PLLCFGR_PLLQ_Pos);
+	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLQ);
 	RCC->PLLCFGR |= (PllSetting->PllQ << RCC_PLLCFGR_PLLQ_Pos);
 
 	if(PllSetting->PllROutputState == MCU_PLL_ENABLED){
@@ -95,13 +95,13 @@ static void Mcu_PllCofiguration(const Mcu_PllConfigType* PllSetting){
 		RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLPEN;	
 	}
 
-	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLSRC_Msk << RCC_PLLCFGR_PLLSRC_Pos);
+	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLSRC);
 
 	if(PllSetting->PllInputSource == MCU_CLOCKSOURCE_HSE){
-		RCC->PLLCFGR |= (RCC_PLLCFGR_PLLSRC_HSE << RCC_PLLCFGR_PLLSRC_HSE_Pos);
+		RCC->PLLCFGR |= RCC_PLLCFGR_PLLSRC_HSE;
 	}
 	else if(PllSetting->PllInputSource == MCU_CLOCKSOURCE_HSI){
-		RCC->PLLCFGR |= (RCC_PLLCFGR_PLLSRC_HSI << RCC_PLLCFGR_PLLSRC_HSI_Pos);
+		RCC->PLLCFGR |= RCC_PLLCFGR_PLLSRC_HSI;
 	}
 
 	RCC->CR |= RCC_CR_PLLON;
@@ -110,13 +110,13 @@ static void Mcu_PllCofiguration(const Mcu_PllConfigType* PllSetting){
 }
 
 static void Mcu_PheripherialConfiguration(const Mcu_PeripherialConfigType* PeriphSetting){
-	RCC->CFGR &= ~(RCC_CFGR_PPRE1 << RCC_CFGR_PPRE1_Pos);		
+	RCC->CFGR &= ~(RCC_CFGR_PPRE1);		
 	RCC->CFGR |= (PeriphSetting->APB1_PRE << RCC_CFGR_PPRE1_Pos);		
 	
-	RCC->CFGR &= ~(RCC_CFGR_PPRE2 << RCC_CFGR_PPRE2_Pos);		
+	RCC->CFGR &= ~(RCC_CFGR_PPRE2);		
 	RCC->CFGR |= (PeriphSetting->APB2_PRE << RCC_CFGR_PPRE2_Pos);		
 	
-	RCC->CFGR &= ~(RCC_CFGR_HPRE << RCC_CFGR_HPRE_Pos);		
+	RCC->CFGR &= ~(RCC_CFGR_HPRE);		
 	RCC->CFGR |= (PeriphSetting->AHB_PRE << RCC_CFGR_HPRE_Pos);		
 }
 
@@ -127,6 +127,6 @@ static void Mcu_FlashLatencyConfiguration(Mcu_FlashLatencyWSType FlashSetting){
 static void Mcu_PwrRangeConfiguration(Mcu_PwrRangeType PwrRangeSetting){
 	RCC->APB1ENR1 |= RCC_APB1ENR1_PWREN;
 	(void)RCC->APB1ENR1;
-	PWR->CR1 &= ~(PWR_CR1_VOS_Msk << PWR_CR1_VOS_Pos);
+	PWR->CR1 &= ~(PWR_CR1_VOS_Msk);
 	PWR->CR1 |= (PwrRangeSetting << PWR_CR1_VOS_Pos); 
 }
