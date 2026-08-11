@@ -27,5 +27,5 @@ const Port_ConfigDataType Port_CfgData[] = {
 
 const Port_ConfigType Port_Config = {
 	.Port_ConfigData = Port_CfgData,
-	.size = 1
+	.size = 2
 };
