@@ -1,8 +1,8 @@
 #include "mcu_cfg.h"
 
 static const Mcu_PllConfigType Mcu_PllConfig_0 = {
-	.PllM = 8,
-	.PllN = 100,
+	.PllM = 6,
+	.PllN = 75,
 	.PllR = 2,
 	.PllP = 7,
 	.PllQ = 2,
