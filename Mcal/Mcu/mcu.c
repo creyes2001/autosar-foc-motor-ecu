@@ -128,5 +128,11 @@ static void Mcu_PwrRangeConfiguration(Mcu_PwrRangeType PwrRangeSetting){
 	RCC->APB1ENR1 |= RCC_APB1ENR1_PWREN;
 	(void)RCC->APB1ENR1;
 	PWR->CR1 &= ~(PWR_CR1_VOS_Msk);
-	PWR->CR1 |= (PwrRangeSetting << PWR_CR1_VOS_Pos); 
-}
+	if(PwrRangeSetting == MCU_PWR_RANGE_1){
+		PWR->CR1 |= PWR_CR1_VOS_0;
+		PWR->CR5 |= PWR_CR5_R1MODE;
+	}
+	else{
+		PWR->CR1 |= PWR_CR1_VOS_1; 
+	}
+	}
