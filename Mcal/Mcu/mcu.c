@@ -34,7 +34,7 @@ Std_ReturnType Mcu_InitClock(Mcu_ClockType ClockSetting){
 
 
 Std_ReturnType Mcu_DistributePllClock(void){	
-	if(Mcu_GetPllStatus() != MCU_PLL_LOCKED){	
+	if(Mcu_GetPllStatus() != MCU_PLL_LOCKED){
 		return E_NOT_OK;
 	}
 	RCC->CFGR |= RCC_CFGR_SW_PLL; 
@@ -68,8 +68,8 @@ static void Mcu_PllCofiguration(const Mcu_PllConfigType* PllSetting){
 	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLR);
 	RCC->PLLCFGR |= (PllSetting->PllR << RCC_PLLCFGR_PLLR_Pos);
 
-	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLP);
-	RCC->PLLCFGR |= (PllSetting->PllP << RCC_PLLCFGR_PLLP_Pos);
+	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLPDIV);
+	RCC->PLLCFGR |= (PllSetting->PllP << RCC_PLLCFGR_PLLPDIV_Pos);
 	
 	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLQ);
 	RCC->PLLCFGR |= (PllSetting->PllQ << RCC_PLLCFGR_PLLQ_Pos);
