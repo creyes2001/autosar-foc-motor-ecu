@@ -1,10 +1,10 @@
 #include "mcu_cfg.h"
 
 static const Mcu_PllConfigType Mcu_PllConfig_0 = {
-	.PllM = 6,
+	.PllM = 5,
 	.PllN = 75,
-	.PllR = 2,
-	.PllP = 7,
+	.PllR = 0,
+	.PllP = 2,
 	.PllQ = 2,
 	.PllROutputState = MCU_PLL_ENABLED,
 	.PllQOutputState = MCU_PLL_ENABLED,
