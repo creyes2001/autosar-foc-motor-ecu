@@ -45,8 +45,8 @@ typedef uint8 Adc_HWUnitType;
 #define ADC_GROUP3 ((Adc_GroupType)0x02)
 #define ADC_GROUP4 ((Adc_GroupType)0x03)
 
-#define ADC1 ((Adc_HWUnitType)0x00)
-#define ADC2 ((Adc_HWUnitType)0x01)
+#define ADC_HW_1 ((Adc_HWUnitType)0x00)
+#define ADC_HW_2 ((Adc_HWUnitType)0x01)
 
 #define ADC_BITS_6   ((Adc_ResolutionType)0x06U)
 #define ADC_BITS_8   ((Adc_ResolutionType)0x08U)
@@ -131,7 +131,6 @@ typedef struct{
 }Adc_ChannelConfigType;
 
 typedef struct{
-	Adc_HWUnitType Adc_HWUnit;
 	Adc_GroupType GroupType; 	
 	Addc_GroupPriorityType Priority;
 	const Adc_NumberOfConvertionsType NumberOfConversions; //Channels to be converted
@@ -149,6 +148,7 @@ typedef struct{
 }Adc_GroupConfigType;
 
 typedef struct{
+	Adc_HWUnitType Adc_HWUnit;
 	Adc_ResolutionType Adc_Resolution;
 	const Adc_GroupConfigType* Adc_GroupCofig;
 	const Adc_NumberOfGroupsType Adc_NumberOfGroups;
