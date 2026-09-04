@@ -1,14 +1,15 @@
 #include "adc.h"
 #include "stm32g431xx.h"
 
-static ADC_TypeDef* Adc_GetAdcHWUnit(Adc_HWUnitType HWUnit);
-static void Adc_SetResolution(Adc_ResolutionType Resolution); 
+static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolution); 
+
+static const ADC_TypeDef* Hw_Unit[2] = {ADC1,ADC2}; //array to get the CMSIS definition
 
 void Adc_Init (const Adc_ConfigType* ConfigPtr){
 	for(uint8 i = 0; i < ConfigPtr->size; i++){	
 		
-		const Adc_ConfigDataType* ConfigData = ConfigPtr->Adc_ConfigData[i];
-		Adc_SetResolution(ConfigData.Adc_Resolution);
+		Adc_ConfigDataType* ConfigData = ConfigPtr->Adc_ConfigData[i];
+		Adc_SetResolution(ConfigData.Adc_HWUnit,ConfigData.Adc_Resolution);
 		for(unit8 j = 0; j < ConfigData.Adc_NumberOfGroups; j++){
 			const Adc_GroupConfigType* GroupConfig = ConfigData->Adc_GroupConfig[j];
 
@@ -53,15 +54,28 @@ Adc_StreamNumSampleType Adc_GetStreamLastPointer (Adc_GroupType Group,Adc_ValueG
 	//TODO:implement
 }
 
-static void Adc_SetResolution(Adc_ResolutionType Resolution){
-	//TODO:implement
+static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolution){
+	HW_Unit[HWUnit]->ADC_CFGR &= ~(ADC_CFGR_RES); //clear the bit field	
+	switch(Resolution){
+		case ADC_BITS_6:
+		HW_Unit[HWUnit]->ADC_CFGR |= ADC_CFGR_RES;	
+		break;
+	
+		case ADC_BITS_8:
+		HW_Unit[HWUnit]->ADC_CFGR |= ADC_CFGR_RES_1;		
+		break;
+
+		case ADC_BITS_10:
+		HW_Unit[HWUnit]->ADC_CFGR |= ADC_CFGR_RES_0;	
+		break;
+
+		case ADC_BITS_12:
+		HW_Unit[HWUnit]->ADC_CFGR &= ~(ADC_CFGR_RES);	
+		break;
+
+		default:
+		HW_Unit[HWUnit]->ADC_CFGR |= ADC_CFGR_RES;	//ADC set as 6-bit resolution by default	
+		break;
+	}
 }
 
-static ADC_TypeDef* Adc_GetAdcHWUnit(Adc_HWUnitType HWUnit){
-	if(HWUnit == ADC_HW_2){
-		return ADC2;
-	}
-	else{
-		return ADC1;
-	}
-}
