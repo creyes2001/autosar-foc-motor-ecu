@@ -1,4 +1,18 @@
-# CAN-based FOC Motor Control (AUTOSAR-inspired)
+# FOC Motor Control (AUTOSAR-inspired)
 
-The project implements a FOC motor control on the STM32G431.
-The project architecture is based on the AUTOSAR layered architecture and includes UDS diagnostic services over CAN bus. The project runs on the FreeRTOS operating system given the hard real-time requeriments. 
+FOC motor control for a BLDC/PMSM motor, built on an AUTOSAR-inspired layered architecture. I chose this structure for learning purposes and to keep drivers portable across different MCUs.
+
+## Hardware
+
+- **MCU:** NUCLEO-G431RB (STM32G431RB)
+- **Motor:** GBM2804H-100T brushless gimbal motor
+- **Motor driver:** STSPIN830
+- **Encoder:** AS5600 magnetic encoder
+- **Power supply:** 12V DC
+
+## Status
+- [x] Mcu module — clock configuration
+- [x] Port module — pin configuration
+- [ ] ADC driver — in progress
+- [ ] PWM driver
+- [ ] FOC control loop
