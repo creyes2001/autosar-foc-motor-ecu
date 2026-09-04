@@ -58,7 +58,6 @@ typedef uint Adc_PrescaleType;
 typedef uint Adc_ConversionTimeType;
 typedef uint Adc_SamplingTimeType;
 typedef uint8 Adc_ResolutionType;
-typedef uint8 Adc_GroupPriorityType;
 typedef Adc_GroupDefType; //assigment of channels to a chanel group
 typedef uint Adc_StreamNumSampleType;
 typedef uint8 Adc_NumerOfConversionsType;
@@ -132,24 +131,23 @@ typedef struct{
 
 typedef struct{
 	Adc_GroupType GroupType; 	
-	Addc_GroupPriorityType Priority;
 	const Adc_NumberOfConvertionsType NumberOfConversions; //Channels to be converted
 	Adc_ConversionType ConversionType; //injected or regular
 	Adc_ValueGroupType ValueGroup;
 	Adc_GroupConvModetype ConversionMode;
 	Adc_ConversionTimetype ConversionType;
-	Adc_TroggerSourceType TriggerSource;
+	Adc_TriggerSourceType TriggerSource;
 	Adc_HwTriggerSignalType HwTriggerSignal;
 	Adc_GroupAccessModeType GroupAccessMode;
 	Adc_Stream_BufferModeType StreamBufferMode;
 	Adc_Stream_NumSampleType StreamNumSample;
-	Adc_ResultAligmentType ResultAligment;
 	const Adc_ChannelConfigtype* Adc_ChannelConfig;
 }Adc_GroupConfigType;
 
 typedef struct{
 	Adc_HWUnitType Adc_HWUnit;
 	Adc_ResolutionType Adc_Resolution;
+	Adc_ResultAligmentType ResultAligment;
 	const Adc_GroupConfigType* Adc_GroupCofig;
 	const Adc_NumberOfGroupsType Adc_NumberOfGroups;
 }Adc_ConfigDataType;
