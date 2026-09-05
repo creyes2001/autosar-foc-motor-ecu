@@ -1,20 +1,30 @@
 #include "adc.h"
 #include "stm32g431xx.h"
 
+#define MAX_ADC_GROUPS 4
+
+static void Mcal_DelayUs(uint32_t us);
+static void Adc_Start(Adc_HWUnitType HWUnit);
+static void Adc_Stop(Adc_HWUnitType HWUnit);
+static Std_ReturnType Adc_Enable(Adc_HWUnitType HWUnit); 
+static Std_ReturnType Adc_Enable(Adc_HWUnitType HWUnit); 
 static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolution); 
 
-static const ADC_TypeDef* Hw_Unit[2] = {ADC1,ADC2}; //array to get the CMSIS definition
+static const ADC_TypeDef* Hw_Unit[2] = {ADC1,ADC2}; //to get the CMSIS definition
+static Adc_ConfigDataType* Adc_Data[MAX_ADC_GROUPS];//to hold the ConfigData struct pointer
 
 void Adc_Init (const Adc_ConfigType* ConfigPtr){
 	for(uint8 i = 0; i < ConfigPtr->size; i++){	
 		
 		Adc_ConfigDataType* ConfigData = ConfigPtr->Adc_ConfigData[i];
 		Adc_SetResolution(ConfigData.Adc_HWUnit,ConfigData.Adc_Resolution);
+		
 		for(unit8 j = 0; j < ConfigData.Adc_NumberOfGroups; j++){
 			const Adc_GroupConfigType* GroupConfig = ConfigData->Adc_GroupConfig[j];
-
+			Adc_Data[GroupConfig.GroupType] = ConfigData; //assign the actual ConfigDatapointer at GroupType position in the array
+			
+			for(uint8 c = 0; c < GroupConfig.NumberOfConvertionsType)
 		}
-
 	}
 }
 
@@ -54,28 +64,45 @@ Adc_StreamNumSampleType Adc_GetStreamLastPointer (Adc_GroupType Group,Adc_ValueG
 	//TODO:implement
 }
 
+static void Adc_Start(Adc_HWUnitType HWUnit){
+	HW_Unit[HWUnit]->CR &= ~ADC_CR_DEEPPWD;
+	HW_Unit[HWUnit]->CR |= ADC_CR_ADVREGEN; 
+	Mcal_DelayUs(40); //startup delay time
+}
+
+static void Adc_Stop(Adc_HWUnitType HWUnit){
+	HW_Unit[HWUnit]->CR &= ~ADC_CR_ADEN;
+	HW_Unit[HWUnit]->CR &= ADC_CR_DEEPPWD;
+}
+
 static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolution){
 	HW_Unit[HWUnit]->ADC_CFGR &= ~(ADC_CFGR_RES); //clear the bit field	
 	switch(Resolution){
 		case ADC_BITS_6:
-		HW_Unit[HWUnit]->ADC_CFGR |= ADC_CFGR_RES;	
+		HW_Unit[HWUnit]->CFGR |= ADC_CFGR_RES;	
 		break;
 	
 		case ADC_BITS_8:
-		HW_Unit[HWUnit]->ADC_CFGR |= ADC_CFGR_RES_1;		
+		HW_Unit[HWUnit]->CFGR |= ADC_CFGR_RES_1;		
 		break;
 
 		case ADC_BITS_10:
-		HW_Unit[HWUnit]->ADC_CFGR |= ADC_CFGR_RES_0;	
+		HW_Unit[HWUnit]->CFGR |= ADC_CFGR_RES_0;	
 		break;
 
 		case ADC_BITS_12:
-		HW_Unit[HWUnit]->ADC_CFGR &= ~(ADC_CFGR_RES);	
+		HW_Unit[HWUnit]->CFGR &= ~(ADC_CFGR_RES);	
 		break;
 
 		default:
-		HW_Unit[HWUnit]->ADC_CFGR |= ADC_CFGR_RES;	//ADC set as 6-bit resolution by default	
+		HW_Unit[HWUnit]->CFGR |= ADC_CFGR_RES;	//ADC set as 6-bit resolution by default	
 		break;
 	}
 }
 
+static void Mcal_DelayUs(uint32_t us){
+    volatile uint32_t count = (SystemCoreClock / 4000000UL) * us;
+    while (count--) {
+        __NOP();
+    }
+}
