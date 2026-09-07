@@ -1,13 +1,15 @@
 #include "adc.h"
 #include "stm32g431xx.h"
+#include "mcal.h"
 
 #define MAX_ADC_GROUPS 4
+#define ADC_CALIBRATION_TIMEOUT_US 1000U 
+#define ADC_ENABLE_TIMEOUT_US 1000U
 
-static void Mcal_DelayUs(uint32_t us);
 static void Adc_Start(Adc_HWUnitType HWUnit);
 static void Adc_Stop(Adc_HWUnitType HWUnit);
 static Std_ReturnType Adc_Enable(Adc_HWUnitType HWUnit); 
-static Std_ReturnType Adc_Enable(Adc_HWUnitType HWUnit); 
+static Std_ReturnType Adc_Disable(Adc_HWUnitType HWUnit); 
 static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolution); 
 
 static const ADC_TypeDef* Hw_Unit[2] = {ADC1,ADC2}; //to get the CMSIS definition
@@ -75,6 +77,26 @@ static void Adc_Stop(Adc_HWUnitType HWUnit){
 	HW_Unit[HWUnit]->CR &= ADC_CR_DEEPPWD;
 }
 
+static Std_ReturnType Adc_Enable(Adc_HWUnitType HWUnit){
+	if(Mcal_WaitBitTimeout(&HW_Unit[HWUnit]->CR,ADC_CR_ADCAL,0U,ADC_CALIBRATION_TIMEOUT_US) != E_OK){
+		return E_NOT_OK;
+	}
+	else{
+		HW_Unit[HWUnit]->ISR |= ADC_ISR_ADRDY;
+		HW_Unit[HWUnit]->CR |= ADC_CR_ADEN;
+		if(Mcal_WaitBitTimeout(&HW_Unit[HWUnit]->ISR,ADC_ISR_ADRDY,ADC_ISR_ADRDY,ADC_ENABLE_TIMEOUT_US) != E_OK){
+			return E_NOT_OK;
+		}
+		HW_Unit[HWUnit]->ISR |= ADC_ISR_ADRDY;
+	}
+	return E_OK;
+
+}
+
+static Std_ReturnType Adc_Disable(Adc_HWUnitType HWUnit){
+
+}
+
 static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolution){
 	HW_Unit[HWUnit]->ADC_CFGR &= ~(ADC_CFGR_RES); //clear the bit field	
 	switch(Resolution){
@@ -100,9 +122,3 @@ static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolutio
 	}
 }
 
-static void Mcal_DelayUs(uint32_t us){
-    volatile uint32_t count = (SystemCoreClock / 4000000UL) * us;
-    while (count--) {
-        __NOP();
-    }
-}
