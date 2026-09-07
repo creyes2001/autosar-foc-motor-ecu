@@ -5,6 +5,8 @@
 #define MAX_ADC_GROUPS 4
 #define ADC_CALIBRATION_TIMEOUT_US 1000U 
 #define ADC_ENABLE_TIMEOUT_US 1000U
+#define ADC_STOP_TIMEOUT_US 1000U
+#define ADC_JSTOP_TIMEOUT_US 1000U
 
 static void Adc_Start(Adc_HWUnitType HWUnit);
 static void Adc_Stop(Adc_HWUnitType HWUnit);
@@ -12,8 +14,8 @@ static Std_ReturnType Adc_Enable(Adc_HWUnitType HWUnit);
 static Std_ReturnType Adc_Disable(Adc_HWUnitType HWUnit); 
 static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolution); 
 
-static const ADC_TypeDef* Hw_Unit[2] = {ADC1,ADC2}; //to get the CMSIS definition
-static Adc_ConfigDataType* Adc_Data[MAX_ADC_GROUPS];//to hold the ConfigData struct pointer
+static volatile ADC_TypeDef* const Hw_Unit[2] = {&ADC1,&ADC2}; //to get the CMSIS definition
+static const Adc_ConfigDataType* Adc_Data[MAX_ADC_GROUPS];//to hold the ConfigData struct pointer
 
 void Adc_Init (const Adc_ConfigType* ConfigPtr){
 	for(uint8 i = 0; i < ConfigPtr->size; i++){	
@@ -94,7 +96,25 @@ static Std_ReturnType Adc_Enable(Adc_HWUnitType HWUnit){
 }
 
 static Std_ReturnType Adc_Disable(Adc_HWUnitType HWUnit){
+	if((HW_Unit[HWUnit]->CR & ADC_CR_ADSTART) == ADC_CR_ADSTART){
+		HW_Unit[HWUnit]->CR |= ADC_CR_ADSTP;
+		if(Mcal_WaitBitTimeout(&HW_Unit[HWUnit]->CR,ADC_CR_ADSTP,0U,ADC_STOP_TIMEOUT_US) != E_OK){
+			return E_NOT_OK;
+		}
+	}
+	if((HW_Unit[HWUnit]->CR & ADC_CR_JADSTART) == ADC_CR_JADSTART){
+		HW_Unit[HWUnit]->CR |= ADC_CR_JADSTP;
+		if(Mcal_WaitBitTimeout(&HW_Unit[HWUnit]->CR,ADC_CR_JADSTP,0U,ADC_JSTOP_TIMEOUT_US) != E_OK){
+			return E_NOT_OK;
+		}
+	}
+	
+	HW_Unit[HWUnit]->CR |= ADC_CR_ADDIS;
 
+	if(Mcal_WaitBitTimeout(&HW_Unit[HWUnit]->CR,ADC_CR_ADEN,0U,ADC_DISABLE_TIMEOUT_US) != E_OK){
+		return E_NOT_OK;
+	}
+	return E_OK;
 }
 
 static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolution){
