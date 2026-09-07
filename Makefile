@@ -8,6 +8,7 @@ OBJ_DIR = $(BUILD_DIR)/obj
 BIN_DIR = $(BUILD_DIR)/bin
 
 INCLUDE_DIRS = $(STM_INCLUDE_DIR)\
+			   ./Mcal\
 			   ./Mcal/Mcu\
 			   ./Mcal/Port\
 			   ./Mcal/Adc\
@@ -22,6 +23,7 @@ SIZE = arm-none-eabi-size
 TARGET  = foc
  
 SOURCES = main.c\
+		  Mcal/mcal.c\
 		  Mcal/Mcu/mcu.c\
 		  Mcal/Mcu/mcu_cfg.c\
 		  Mcal/Port/port.c\
@@ -33,6 +35,7 @@ SOURCES = main.c\
 ASM_SRCS = $(STM_STARTUP_DIR)/startup_stm32g431xx.s\
 
 vpath %.c . \
+	Mcal\
 	Mcal/Mcu\
 	Mcal/Port\
 	Mcal/Adc
