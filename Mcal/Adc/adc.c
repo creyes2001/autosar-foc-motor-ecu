@@ -13,6 +13,7 @@ static void Adc_Stop(Adc_HWUnitType HWUnit);
 static Std_ReturnType Adc_Enable(Adc_HWUnitType HWUnit); 
 static Std_ReturnType Adc_Disable(Adc_HWUnitType HWUnit); 
 static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolution); 
+static Std_RetunType Adc_Calibration(Adc_HWUnitType HWUnit,Adc_ConversionType Convertion);//must be called after Adc_Start
 
 static volatile ADC_TypeDef* const Hw_Unit[2] = {&ADC1,&ADC2}; //to get the CMSIS definition
 static const Adc_ConfigDataType* Adc_Data[MAX_ADC_GROUPS];//to hold the ConfigData struct pointer
@@ -142,3 +143,27 @@ static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolutio
 	}
 }
 
+static Std_RetunType Adc_Calibration(Adc_HWUnitType HWUnit,Adc_ConversionType Convertion){
+	if((HW_Unit[HWUnit]->CR & ADC_CR_ADEN) == ADC_CR_ADEN){
+		if(Adc_Disable(HWUnit) != E_OK){
+			return E_NOT_OK;
+		}
+	}
+
+	if(Conversion == ADC_INPUT_SINGLE_ENDED){
+		HW_Unit[HWUnit]->CR &= ~ADC_CR_ADCALDIF; 
+	}
+	else if(Conversion == ADC_INPUT_DIFFERENTIAL){
+		HW_Unit[HWUnit]->CR |= ADC_CR_ADCALDIF; 
+	}
+	else{
+		return E_NOT_OK;
+	}
+
+	HW_Unit[HWUnit]->CR |= ADC_CR_ADCAL;
+
+	if(Mcal_WaitBitTimeout(&HW_Unit[HWUnit]->CR,ADC_CR_ADCAL,0U,ADC_CALIBRATION_TIMEOUT_US) != E_OK){
+		return E_NOT_OK;
+	}
+	return E_OK;
+}
