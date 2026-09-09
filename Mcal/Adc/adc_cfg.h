@@ -131,11 +131,11 @@ typedef struct{
 
 typedef struct{
 	Adc_GroupType GroupType; 	
-	const Adc_NumberOfConvertionsType NumberOfConversions; //Channels to be converted
+	Adc_NumberOfConvertionsType NumberOfConversions; //Channels to be converted
 	Adc_ConversionType ConversionType; //injected or regular
 	Adc_ValueGroupType ValueGroup;
 	Adc_GroupConvModetype ConversionMode;
-	Adc_ConversionTimetype ConversionType;
+	Adc_ConversionTimetype ConversionTimeType;
 	Adc_TriggerSourceType TriggerSource;
 	Adc_HwTriggerSignalType HwTriggerSignal;
 	Adc_GroupAccessModeType GroupAccessMode;
@@ -149,7 +149,7 @@ typedef struct{
 	Adc_ResolutionType Adc_Resolution;
 	Adc_ResultAligmentType ResultAligment;
 	const Adc_GroupConfigType* Adc_GroupCofig;
-	const Adc_NumberOfGroupsType Adc_NumberOfGroups;
+	Adc_NumberOfGroupsType Adc_NumberOfGroups;
 }Adc_ConfigDataType;
 
 //struct for ADC configuration data
