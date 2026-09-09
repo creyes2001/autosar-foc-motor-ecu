@@ -1,8 +1,8 @@
 #include "mcal.h"
 
-void Mcal_DelayUs(uint32_t us)
+void Mcal_DelayUs(uint32 us)
 {
-    volatile uint32_t count = (SystemCoreClock / 4000000UL) * us;
+    volatile uint32 count = (SystemCoreClock / 4000000UL) * us;
     while (count--) {
         __NOP();
     }
