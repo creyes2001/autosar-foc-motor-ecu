@@ -53,10 +53,19 @@ typedef uint8 Adc_HWUnitType;
 #define ADC_BITS_10  ((Adc_ResolutionType)0x0AU)
 #define ADC_BITS_12  ((Adc_ResolutionType)0x0CU)
 
+#define ADC_2_5_CLOCK_CYCLES	((Adc_SamplingTimeType)0x00)
+#define ADC_6_5_CLOCK_CYCLES	((Adc_SamplingTimeType)0x01)
+#define ADC_12_5_CLOCK_CYCLES	((Adc_SamplingTimeType)0x02)
+#define ADC_24_5_CLOCK_CYCLES	((Adc_SamplingTimeType)0x03)
+#define ADC_47_5_CLOCK_CYCLES	((Adc_SamplingTimeType)0x04)
+#define ADC_92_5_CLOCK_CYCLES	((Adc_SamplingTimeType)0x05)
+#define ADC_247_5_CLOCK_CYCLES	((Adc_SamplingTimeType)0x06)
+#define ADC_640_5_CLOCK_CYCLES	((Adc_SamplingTimeType)0x07)
+
 typedef int Adc_ValueGroupType;
 typedef uint Adc_PrescaleType;
 typedef uint Adc_ConversionTimeType;
-typedef uint Adc_SamplingTimeType;
+typedef uint8 Adc_SamplingTimeType;
 typedef uint8 Adc_ResolutionType;
 typedef Adc_GroupDefType; //assigment of channels to a chanel group
 typedef uint Adc_StreamNumSampleType;
