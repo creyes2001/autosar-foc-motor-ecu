@@ -15,7 +15,8 @@ static Std_ReturnType Adc_Disable(Adc_HWUnitType HWUnit);
 static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolution); 
 static Std_RetunType Adc_Calibration(Adc_HWUnitType HWUnit,Adc_ConversionType Convertion);//must be called after Adc_Start
 static Std_ReturnType Adc_DataAligment(Adc_HWUnitType HWUnit,Adc_ResultAligmentType ResultAligment);
-static Std_ReturnType Adc_SetChannelInputMode(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_InputModeType InputMode);//must be called when ADC is disable
+static Std_ReturnType Adc_SetChannelInputMode(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_InputModeType InputM);//must be called when ADC is disable
+static Std_ReturnType Adc_SetChannelSamplingTime(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_SamplingTimeType SamplingT);
 
 static volatile ADC_TypeDef* const Hw_Unit[2] = {&ADC1,&ADC2}; //to get the CMSIS definition
 static const Adc_ConfigDataType* Adc_Data[MAX_ADC_GROUPS];//to hold the ConfigData struct pointer
@@ -184,7 +185,7 @@ static StdReturnType Adc_DataAligment(Adc_HWUnitType HWUnit,Adc_ResultAligmentTy
 	return E_OK;
 }
 
-static Std_ReturnType Adc_SetChannelInputMode(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_InputModeType InputMode){
+static Std_ReturnType Adc_SetChannelInputMode(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_InputModeType InputM){
 
 	if((HW_Unit[HWUnit]->CR & ADC_CR_ADEN) == ADC_CR_ADEN){
         if(Adc_Disable(HWUnit) != E_OK){
@@ -192,12 +193,37 @@ static Std_ReturnType Adc_SetChannelInputMode(Adc_HWUnitType HWUnit,Adc_ChannelT
         }
     }
 
-	if(InputMode == ADC_INPUT_SINGLE_ENDED){
+	if(InputM == ADC_INPUT_SINGLE_ENDED){
 	HW_Unit[HWUnit]->DIFSEL &= ~(1UL << ChannelId);
 	}
 
-	else if(InputMode == ADC_INPUT_DIFFERENTIAL) {
+	else if(InputM == ADC_INPUT_DIFFERENTIAL) {
 	HW_Unit[HWUnit]->DIFSEL |= (1UL << ChannelId);
+	}
+
+	else{
+		return E_NOT_OK;
+	}
+
+	return E_OK;
+}
+
+static Std_ReturnType Adc_SetChannelSamplingTime(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_SamplingTimeType SamplingT){
+	
+	if(((HW_Unit[HWUnit]->CR & ADC_CR_ADSTART) == ADC_CR_ADSTART) || ((HW_Unit[HWUnit]->CR & ADC_CR_JADSTART) == ADC_CR_JADSTART)){
+        if(Adc_Disable(HWUnit) != E_OK){
+            return E_NOT_OK;
+        }
+    }
+
+	if(ChannelId <= 0x09){	//from channel 0 to 9
+		HW_Unit[HWUnit]->SMPR1 &= ~(ADC_SMPR1_SMP0 << (ChannelId * 3));	
+		HW_Unit[HWUnit]->SMPR1 |= ((SamplingT & 0x7U)<< (ChannelId * 3));
+	}
+
+	else if(ChannelId >= 0x0A && ChannelId <= 0x12) { //from channel 10 to 18
+		HW_Unit[HWUnit]->SMPR2 &= ~(ADC_SMPR2_SMP0 << ((ChannelId - 0x0A)* 3));	
+		HW_Unit[HWUnit]->SMPR2 |= ((SamplingT & 0x7U) << ((ChannelId - 0x0A) * 3));
 	}
 
 	else{
