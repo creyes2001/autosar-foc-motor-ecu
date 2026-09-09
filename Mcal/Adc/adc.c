@@ -15,6 +15,7 @@ static Std_ReturnType Adc_Disable(Adc_HWUnitType HWUnit);
 static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolution); 
 static Std_RetunType Adc_Calibration(Adc_HWUnitType HWUnit,Adc_ConversionType Convertion);//must be called after Adc_Start
 static Std_ReturnType Adc_DataAligment(Adc_HWUnitType HWUnit,Adc_ResultAligmentType ResultAligment);
+static Std_ReturnType Adc_SetChannelInputMode(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_InputModeType InputMode);//must be called when ADC is disable
 
 static volatile ADC_TypeDef* const Hw_Unit[2] = {&ADC1,&ADC2}; //to get the CMSIS definition
 static const Adc_ConfigDataType* Adc_Data[MAX_ADC_GROUPS];//to hold the ConfigData struct pointer
@@ -180,5 +181,28 @@ static StdReturnType Adc_DataAligment(Adc_HWUnitType HWUnit,Adc_ResultAligmentTy
 	else{
 		return E_NOT_OK;
 	}
+	return E_OK;
+}
+
+static Std_ReturnType Adc_SetChannelInputMode(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_InputModeType InputMode){
+
+	if((HW_Unit[HWUnit]->CR & ADC_CR_ADEN) == ADC_CR_ADEN){
+        if(Adc_Disable(HWUnit) != E_OK){
+            return E_NOT_OK;
+        }
+    }
+
+	if(InputMode == ADC_INPUT_SINGLE_ENDED){
+	HW_Unit[HWUnit]->DIFSEL &= ~(1UL << ChannelId);
+	}
+
+	else if(InputMode == ADC_INPUT_DIFFERENTIAL) {
+	HW_Unit[HWUnit]->DIFSEL |= (1UL << ChannelId);
+	}
+
+	else{
+		return E_NOT_OK;
+	}
+
 	return E_OK;
 }
