@@ -1,6 +1,9 @@
 #ifndef ADC_H
 #define ADC_H
 
+#include "adc_cfg.h"
+#include "stm32g431xx.h"
+
 void Adc_Init (const Adc_ConfigType* ConfigPtr);
 Std_ReturnType Adc_SetupResultBuffer (Adc_GroupType Group,Adc_ValueGroupType* DataBufferPtr);
 void Adc_DeInit (void);
