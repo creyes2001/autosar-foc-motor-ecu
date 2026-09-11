@@ -1,10 +1,10 @@
 #include "adc.h"
-#include "stm32g431xx.h"
 #include "mcal.h"
 
 #define MAX_ADC_GROUPS 4
 #define ADC_CALIBRATION_TIMEOUT_US 1000U 
 #define ADC_ENABLE_TIMEOUT_US 1000U
+#define ADC_DISABLE_TIMEOUT_US 1000U
 #define ADC_STOP_TIMEOUT_US 1000U
 #define ADC_JSTOP_TIMEOUT_US 1000U
 
@@ -13,26 +13,28 @@ static void Adc_Stop(Adc_HWUnitType HWUnit);
 static Std_ReturnType Adc_Enable(Adc_HWUnitType HWUnit); 
 static Std_ReturnType Adc_Disable(Adc_HWUnitType HWUnit); 
 static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolution); 
-static Std_RetunType Adc_Calibration(Adc_HWUnitType HWUnit,Adc_ConversionType Convertion);//must be called after Adc_Start
+static Std_ReturnType Adc_Calibration(Adc_HWUnitType HWUnit,Adc_ConversionType Conversion);//must be called after Adc_Start
 static Std_ReturnType Adc_DataAligment(Adc_HWUnitType HWUnit,Adc_ResultAligmentType ResultAligment);
 static Std_ReturnType Adc_SetChannelInputMode(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_InputModeType InputM);//must be called when ADC is disable
 static Std_ReturnType Adc_SetChannelSamplingTime(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_SamplingTimeType SamplingT);
 
-static volatile ADC_TypeDef* const Hw_Unit[2] = {&ADC1,&ADC2}; //to get the CMSIS definition
+static volatile ADC_TypeDef* const HW_Unit[2] = {ADC1,ADC2}; //to get the CMSIS definition
 static const Adc_ConfigDataType* Adc_Data[MAX_ADC_GROUPS];//to hold the ConfigData struct pointer
 
 void Adc_Init (const Adc_ConfigType* ConfigPtr){
 	for(uint8 i = 0; i < ConfigPtr->size; i++){	
 		
-		Adc_ConfigDataType* ConfigData = ConfigPtr->Adc_ConfigData[i];
+		const Adc_ConfigDataType* ConfigData = &ConfigPtr->Adc_ConfigData[i];
 		//TODO:implement a calibration flag system to avoid repeating the same ADC input type calibration
-		Adc_SetResolution(ConfigData.Adc_HWUnit,ConfigData.Adc_Resolution);
+		Adc_SetResolution(ConfigData->Adc_HWUnit,ConfigData->Adc_Resolution);
 		
-		for(unit8 j = 0; j < ConfigData.Adc_NumberOfGroups; j++){
-			const Adc_GroupConfigType* GroupConfig = ConfigData->Adc_GroupConfig[j];
-			Adc_Data[GroupConfig.GroupType] = ConfigData; //assign the actual ConfigDatapointer at GroupType position in the array
+		for(uint8 j = 0; j < ConfigData->Adc_NumberOfGroups; j++){
+			const Adc_GroupConfigType* GroupConfig = &ConfigData->Adc_GroupConfig[j];
+			Adc_Data[GroupConfig->GroupType] = ConfigData; //assign the actual ConfigDatapointer at GroupType position in the array
 			
-			for(uint8 c = 0; c < GroupConfig.NumberOfConvertionsType)
+			for(uint8 c = 0; c < GroupConfig->NumberOfConversions; c++){
+				const Adc_ChannelConfigType* ChannelConfig = &GroupConfig->Adc_ChannelConfig[c];	
+			}
 		}
 	}
 }
@@ -123,7 +125,7 @@ static Std_ReturnType Adc_Disable(Adc_HWUnitType HWUnit){
 }
 
 static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolution){
-	HW_Unit[HWUnit]->ADC_CFGR &= ~(ADC_CFGR_RES); //clear the bit field	
+	HW_Unit[HWUnit]->CFGR &= ~(ADC_CFGR_RES); //clear the bit field	
 	switch(Resolution){
 		case ADC_BITS_6:
 		HW_Unit[HWUnit]->CFGR |= ADC_CFGR_RES;	
@@ -147,7 +149,7 @@ static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolutio
 	}
 }
 
-static Std_ReturnType Adc_Calibration(Adc_HWUnitType HWUnit,Adc_ConversionType Convertion){
+static Std_ReturnType Adc_Calibration(Adc_HWUnitType HWUnit,Adc_ConversionType Conversion){
 	if((HW_Unit[HWUnit]->CR & ADC_CR_ADEN) == ADC_CR_ADEN){
 		if(Adc_Disable(HWUnit) != E_OK){
 			return E_NOT_OK;
@@ -172,7 +174,7 @@ static Std_ReturnType Adc_Calibration(Adc_HWUnitType HWUnit,Adc_ConversionType C
 	return E_OK;
 }
 
-static StdReturnType Adc_DataAligment(Adc_HWUnitType HWUnit,Adc_ResultAligmentType ResultAligment){
+static Std_ReturnType Adc_DataAligment(Adc_HWUnitType HWUnit,Adc_ResultAligmentType ResultAligment){
 	if(ResultAligment == ADC_ALIGN_LEFT){
 		HW_Unit[HWUnit]->CFGR |= ADC_CFGR_ALIGN;
 	}
@@ -222,7 +224,7 @@ static Std_ReturnType Adc_SetChannelSamplingTime(Adc_HWUnitType HWUnit,Adc_Chann
 	}
 
 	else if(ChannelId >= 0x0A && ChannelId <= 0x12) { //from channel 10 to 18
-		HW_Unit[HWUnit]->SMPR2 &= ~(ADC_SMPR2_SMP0 << ((ChannelId - 0x0A)* 3));	
+		HW_Unit[HWUnit]->SMPR2 &= ~(ADC_SMPR2_SMP10 << ((ChannelId - 0x0A)* 3));	
 		HW_Unit[HWUnit]->SMPR2 |= ((SamplingT & 0x7U) << ((ChannelId - 0x0A) * 3));
 	}
 

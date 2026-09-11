@@ -2,6 +2,7 @@
 #define ADC_CFG_H
 
 #include "Std_Types.h"
+#include "Platform_Types.h"
 
 typedef uint Adc_ChannelType;	//ID of an ADC channel
 typedef uint Adc_GroupType;		//ID of an ADC group
