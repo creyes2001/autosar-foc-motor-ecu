@@ -23,6 +23,9 @@ typedef uint8 Adc_HWUnitType;
 #define ADC1_CH13 ((Adc_ChannelType)0x0C)
 #define ADC1_CH14 ((Adc_ChannelType)0x0D)
 #define ADC1_CH15 ((Adc_ChannelType)0x0E)
+#define ADC1_CH16 ((Adc_ChannelType)0x0F)
+#define ADC1_CH17 ((Adc_ChannelType)0x10)
+#define ADC1_CH18 ((Adc_ChannelType)0x20)
 
 #define ADC2_CH1 ((Adc_ChannelType)0x00)
 #define ADC2_CH2 ((Adc_ChannelType)0x01)
@@ -40,6 +43,8 @@ typedef uint8 Adc_HWUnitType;
 #define ADC2_CH14 ((Adc_ChannelType)0x0D)
 #define ADC2_CH15 ((Adc_ChannelType)0x0E)
 #define ADC2_CH16 ((Adc_ChannelType)0x0F)
+#define ADC2_CH17 ((Adc_ChannelType)0x10)
+#define ADC2_CH18 ((Adc_ChannelType)0x20)
 
 #define ADC_GROUP1 ((Adc_GroupType)0x00)
 #define ADC_GROUP2 ((Adc_GroupType)0x01)
