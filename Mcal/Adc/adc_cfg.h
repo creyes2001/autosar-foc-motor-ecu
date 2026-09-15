@@ -68,6 +68,39 @@ typedef uint8 Adc_HWUnitType;
 #define ADC_247_5_CLOCK_CYCLES	((Adc_SamplingTimeType)0x06)
 #define ADC_640_5_CLOCK_CYCLES	((Adc_SamplingTimeType)0x07)
 
+#define ADC_EXT_TRG		((Adc_HwTriggSrcType)0x00)
+#define ADC_EXT_TRG1	((Adc_HwTriggSrcType)0x01)
+#define ADC_EXT_TRG2	((Adc_HwTriggSrcType)0x02)
+#define ADC_EXT_TRG3	((Adc_HwTriggSrcType)0x03)
+#define ADC_EXT_TRG4	((Adc_HwTriggSrcType)0x04)
+#define ADC_EXT_TRG5	((Adc_HwTriggSrcType)0x05)
+#define ADC_EXT_TRG6	((Adc_HwTriggSrcType)0x06)
+#define ADC_EXT_TRG7	((Adc_HwTriggSrcType)0x07)
+#define ADC_EXT_TRG8	((Adc_HwTriggSrcType)0x08)
+#define ADC_EXT_TRG9	((Adc_HwTriggSrcType)0x09)
+#define ADC_EXT_TRG10	((Adc_HwTriggSrcType)0x0A)
+#define ADC_EXT_TRG11	((Adc_HwTriggSrcType)0x0B)
+#define ADC_EXT_TRG12	((Adc_HwTriggSrcType)0x0C)
+#define ADC_EXT_TRG13	((Adc_HwTriggSrcType)0x0D)
+#define ADC_EXT_TRG14	((Adc_HwTriggSrcType)0x0E)
+#define ADC_EXT_TRG15	((Adc_HwTriggSrcType)0x0F)
+#define ADC_EXT_TRG16	((Adc_HwTriggSrcType)0x10)
+#define ADC_EXT_TRG17	((Adc_HwTriggSrcType)0x11)
+#define ADC_EXT_TRG18	((Adc_HwTriggSrcType)0x12)
+#define ADC_EXT_TRG19	((Adc_HwTriggSrcType)0x13)
+#define ADC_EXT_TRG20	((Adc_HwTriggSrcType)0x14)
+#define ADC_EXT_TRG21	((Adc_HwTriggSrcType)0x15)
+#define ADC_EXT_TRG22	((Adc_HwTriggSrcType)0x16)
+#define ADC_EXT_TRG23	((Adc_HwTriggSrcType)0x17)
+#define ADC_EXT_TRG24	((Adc_HwTriggSrcType)0x18)
+#define ADC_EXT_TRG25	((Adc_HwTriggSrcType)0x19)
+#define ADC_EXT_TRG26	((Adc_HwTriggSrcType)0x1A)
+#define ADC_EXT_TRG27	((Adc_HwTriggSrcType)0x1B)
+#define ADC_EXT_TRG28	((Adc_HwTriggSrcType)0x1C)
+#define ADC_EXT_TRG29	((Adc_HwTriggSrcType)0x1D)
+#define ADC_EXT_TRG30	((Adc_HwTriggSrcType)0x1E)
+#define ADC_EXT_TRG31	((Adc_HwTriggSrcType)0x1F)
+
 typedef int Adc_ValueGroupType;
 typedef uint8 Adc_PrescaleType;
 typedef uint8 Adc_ConversionTimeType;
@@ -77,6 +110,7 @@ typedef uint8 Adc_GroupDefType; //assigment of channels to a chanel group
 typedef uint8 Adc_StreamNumSampleType;
 typedef uint8 Adc_NumberOfConversionsType;
 typedef uint8 Adc_NumberOfGroupsType;
+typedef uint8 Adc_HwTriggSrcType;
 
 typedef enum{
 	ADC_INPUT_SINGLE_ENDED = 0x00,
