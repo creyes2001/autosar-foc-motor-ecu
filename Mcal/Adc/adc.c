@@ -17,6 +17,9 @@ static Std_ReturnType Adc_Calibration(Adc_HWUnitType HWUnit,Adc_ConversionType C
 static Std_ReturnType Adc_DataAligment(Adc_HWUnitType HWUnit,Adc_ResultAligmentType ResultAligment);
 static Std_ReturnType Adc_SetChannelInputMode(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_InputModeType InputM);//must be called when ADC is disable
 static Std_ReturnType Adc_SetChannelSamplingTime(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_SamplingTimeType SamplingT);
+static Std_ReturnType Adc_SetGroupChannels(Adc_HWUnitType HWUnit,Adc_ConversionType Conversion,Adc_NumberOfConversionsType NumberOfConversions,const Adc_ChannelConfigType* ChannelConfig);
+static Std_ReturnType Adc_SetTriggerSrc(Adc_HWUnitType HWUnit,Adc_TriggerSourceType Trigger);
+static Std_ReturnType Adc_SetHwTriggerEdge(Adc_HwTriggerSignalType HwTriggerSignal);//called from Adc_SetTriggerSrc
 
 static volatile ADC_TypeDef* const HW_Unit[2] = {ADC1,ADC2}; //to get the CMSIS definition
 static const Adc_ConfigDataType* Adc_Data[MAX_ADC_GROUPS];//to hold the ConfigData struct pointer
@@ -233,4 +236,54 @@ static Std_ReturnType Adc_SetChannelSamplingTime(Adc_HWUnitType HWUnit,Adc_Chann
 	}
 
 	return E_OK;
+}
+
+
+static Std_ReturnType Adc_SetGroupChannels(Adc_HWUnitType HWUnit,Adc_ConversionType Conversion,Adc_NumberOfConversionsType NumberOfConversions,const Adc_ChannelConfigType* ChannelConfig){
+		
+		if(Adc_Disable(HWUnit) != E_OK){
+			return E_NOT_OK;
+		}
+
+		if(Conversion == ADC_REGULAR_CONVERSION){
+			HW_Unit[HWUnit]->SQR1 &= ~ADC_SQR1_L;	
+			HW_Unit[HWUnit]->SQR1 |= (NumberOfConversions << ADC_SQR1_L_Pos);
+
+			for(uint8 i = 0U; i < NumberOfConversions; i++){
+				if(i >= 0 && i<= 3){
+					HW_Unit[HWUnit]->SQR1 |= (ChannelConfig[i].Channel << (ADC_SQR1_SQ1_Pos + (i*6)));
+				}
+				else if(i >= 4 && i<= 8){
+					HW_Unit[HWUnit]->SQR2 |= (ChannelConfig[i].Channel << (ADC_SQR2_SQ5_Pos + ((i-4)*6)));
+				}
+				else if(i >= 9 && i<= 13){
+					HW_Unit[HWUnit]->SQR3 |= (ChannelConfig[i].Channel << (ADC_SQR3_SQ10_Pos + ((i-9)*6)));
+				}
+				else if(i >= 14 && i<= 15){
+					HW_Unit[HWUnit]->SQR4 |= (ChannelConfig[i].Channel << (ADC_SQR4_SQ15_Pos + ((i-14)*6)));
+				}
+			}
+		}
+		else if(Conversion == ADC_INJECTED_CONVERSION){
+			HW_Unit[HWUnit]->JSQR &= ~ADC_JSQR_JL;
+			HW_Unit[HWUnit]->JSQR |= (NumberOfConversions << ADC_JSQR_JL_Pos);
+			
+			for(uint8 i = 0U; i < NumberOfConversions; i++){
+				HW_Unit[HWUnit]->JSQR |= (ChannelConfig[i].Channel << (ADC_JSQR_JSQ1_Pos + (i*6)));
+			}
+
+		}
+		else{
+			return E_NOT_OK;
+		}
+	
+	return E_OK;
+}
+
+static Std_ReturnType Adc_SetTriggerSrc(Adc_HWUnitType HWUnit,Adc_TriggerSourceType Trigger){
+	
+}
+
+static Std_ReturnType Adc_SetHwTriggerEdge(Adc_HwTriggerSignalType HwTriggerSignal){
+	
 }
