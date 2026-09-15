@@ -18,8 +18,7 @@ static Std_ReturnType Adc_DataAligment(Adc_HWUnitType HWUnit,Adc_ResultAligmentT
 static Std_ReturnType Adc_SetChannelInputMode(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_InputModeType InputM);//must be called when ADC is disable
 static Std_ReturnType Adc_SetChannelSamplingTime(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_SamplingTimeType SamplingT);
 static Std_ReturnType Adc_SetGroupChannels(Adc_HWUnitType HWUnit,Adc_ConversionType Conversion,Adc_NumberOfConversionsType NumberOfConversions,const Adc_ChannelConfigType* ChannelConfig);
-static Std_ReturnType Adc_SetTriggerSrc(Adc_HWUnitType HWUnit,Adc_TriggerSourceType Trigger);
-static Std_ReturnType Adc_SetHwTriggerEdge(Adc_HwTriggerSignalType HwTriggerSignal);//called from Adc_SetTriggerSrc
+static Std_ReturnType Adc_SetTriggerSrc(Adc_HWUnitType HWUnit,Adc_TriggerSourceType Trigger,Adc_HwTriggerSignalType Signal,Adc_ConversionType Conversion, Adc_HwTriggSrcType HwTriggSrc);
 
 static volatile ADC_TypeDef* const HW_Unit[2] = {ADC1,ADC2}; //to get the CMSIS definition
 static const Adc_ConfigDataType* Adc_Data[MAX_ADC_GROUPS];//to hold the ConfigData struct pointer
@@ -280,10 +279,73 @@ static Std_ReturnType Adc_SetGroupChannels(Adc_HWUnitType HWUnit,Adc_ConversionT
 	return E_OK;
 }
 
-static Std_ReturnType Adc_SetTriggerSrc(Adc_HWUnitType HWUnit,Adc_TriggerSourceType Trigger){
+static Std_ReturnType Adc_SetTriggerSrc(Adc_HWUnitType HWUnit,Adc_TriggerSourceType Trigger,Adc_HwTriggerSignalType Signal,Adc_ConversionType Conversion, Adc_HwTriggSrcType HwTriggSrc){
 	
+	if(Adc_Disable(HWUnit) != E_OK){
+		return E_NOT_OK;
+	}
+
+	if(Conversion == ADC_REGULAR_CONVERSION){
+		if(Trigger == ADC_TRIGG_SRC_SW){
+			HW_Unit[HWUnit]->CFGR &= ~ADC_CFGR_EXTEN;
+		}
+		else if(Trigger == ADC_TRIGG_SRC_HW){
+			HW_Unit[HWUnit]->CFGR &= ~ADC_CFGR_EXTEN;	//clear 
+			switch(Signal){
+				case ADC_HW_TRIG_RISING_EDGE:
+					HW_Unit[HWUnit]->CFGR |= ADC_CFGR_EXTEN_0;
+					break;
+				case ADC_HW_TRIG_FALLING_EDGE:
+					HW_Unit[HWUnit]->CFGR |= ADC_CFGR_EXTEN_1;
+					break;
+				case ADC_HW_TRIG_BOTH_EDGES:
+					HW_Unit[HWUnit]->CFGR |= ADC_CFGR_EXTEN;
+					break;
+				default:
+					break;
+			}
+			
+			HW_Unit[HWUnit]->CFGR &= ~ADC_CFGR_EXTSEL;	//clear
+			HW_Unit[HWUnit]->CFGR |= (HwTriggSrc << ADC_CFGR_EXTSEL_Pos);	//set the haedware trigger source	
+		}
+		else{
+			return E_NOT_OK;
+		}
+	}
+
+	else if(Conversion == ADC_INJECTED_CONVERSION){
+		if(Trigger == ADC_TRIGG_SRC_SW){
+			HW_Unit[HWUnit]->JSQR &= ~ADC_JSQR_JEXTEN;
+		}
+		else if(Trigger == ADC_TRIGG_SRC_HW){
+			HW_Unit[HWUnit]->JSQR &= ~ADC_JSQR_JEXTEN;	//clear
+			switch(Signal){
+				case ADC_HW_TRIG_RISING_EDGE:
+					HW_Unit[HWUnit]->JSQR |= ADC_JSQR_JEXTEN_0;
+					break;
+				case ADC_HW_TRIG_FALLING_EDGE:
+					HW_Unit[HWUnit]->JSQR |= ADC_JSQR_JEXTEN_1;
+					break;
+				case ADC_HW_TRIG_BOTH_EDGES:
+					HW_Unit[HWUnit]->JSQR |= ADC_JSQR_JEXTEN;
+					break;
+				default:
+					break;
+			}
+			HW_Unit[HWUnit]->JSQR &= ~ADC_JSQR_JEXTSEL;	//clear
+			HW_Unit[HWUnit]->JSQR |= (HwTriggSrc << ADC_JSQR_JEXTSEL_Pos);	//set the hardware trigger source
+		}
+		else{
+			return E_NOT_OK;
+		}
+	
+	}
+
+	else{
+		return E_NOT_OK;
+	}
+	
+	return E_OK;
 }
 
-static Std_ReturnType Adc_SetHwTriggerEdge(Adc_HwTriggerSignalType HwTriggerSignal){
 	
-}
