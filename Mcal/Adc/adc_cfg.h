@@ -101,7 +101,7 @@ typedef uint8 Adc_HWUnitType;
 #define ADC_EXT_TRG30	((Adc_HwTriggSrcType)0x1E)
 #define ADC_EXT_TRG31	((Adc_HwTriggSrcType)0x1F)
 
-typedef int Adc_ValueGroupType;
+typedef uint8 Adc_ValueGroupType;
 typedef uint8 Adc_PrescaleType;
 typedef uint8 Adc_ConversionTimeType;
 typedef uint8 Adc_SamplingTimeType;
@@ -175,7 +175,6 @@ typedef struct{
 	Adc_ChannelType Channel;
 	Adc_InputModeType InputMode;
 	Adc_SamplingTimeType SamplingTime;
-	Adc_ChannelRangeSelectType ChannelRange;
 }Adc_ChannelConfigType;
 
 typedef struct{
@@ -187,6 +186,7 @@ typedef struct{
 	Adc_ConversionTimeType ConversionTimeType;
 	Adc_TriggerSourceType TriggerSource;
 	Adc_HwTriggerSignalType HwTriggerSignal;
+	Adc_HwTriggerSrcType HwTriggerSrc;
 	Adc_GroupAccessModeType GroupAccessMode;
 	Adc_StreamBufferModeType StreamBufferMode;
 	Adc_StreamNumSampleType StreamNumSample;
