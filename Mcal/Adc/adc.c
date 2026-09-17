@@ -19,7 +19,7 @@ static Std_ReturnType Adc_SetChannelInputMode(Adc_HWUnitType HWUnit,Adc_ChannelT
 static Std_ReturnType Adc_SetChannelSamplingTime(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_SamplingTimeType SamplingT);
 static Std_ReturnType Adc_SetGroupChannels(Adc_HWUnitType HWUnit,Adc_ConversionType Conversion,Adc_NumberOfConversionsType NumberOfConversions,const Adc_ChannelConfigType* ChannelConfig);
 static Std_ReturnType Adc_SetTriggerSrc(Adc_HWUnitType HWUnit,Adc_TriggerSourceType Trigger,Adc_HwTriggerSignalType Signal,Adc_ConversionType Conversion, Adc_HwTriggSrcType HwTriggSrc);
-
+static StdReturnType Adc_ConversionMode(Adc_HWUnit HWUnit,Adc_GroupConvMode ConvMode);
 static volatile ADC_TypeDef* const HW_Unit[2] = {ADC1,ADC2}; //to get the CMSIS definition
 static const Adc_ConfigDataType* Adc_Data[MAX_ADC_GROUPS];//to hold the ConfigData struct pointer
 
@@ -29,21 +29,20 @@ void Adc_Init (const Adc_ConfigType* ConfigPtr){
 		const Adc_ConfigDataType* ConfigData = &ConfigPtr->Adc_ConfigData[i];
 		//TODO:implement a calibration flag system to avoid repeating the same ADC input type calibration
 		Adc_SetResolution(ConfigData->Adc_HWUnit,ConfigData->Adc_Resolution);
-		
+		Adc_DataAligment(ConfigData->Adc_HWUnit,ConfigData->ResultAligment);
 		for(uint8 j = 0; j < ConfigData->Adc_NumberOfGroups; j++){
 			const Adc_GroupConfigType* GroupConfig = &ConfigData->Adc_GroupConfig[j];
 			Adc_Data[GroupConfig->GroupType] = ConfigData; //assign the actual ConfigDatapointer at GroupType position in the array
-			
+					
 			for(uint8 c = 0; c < GroupConfig->NumberOfConversions; c++){
 				const Adc_ChannelConfigType* ChannelConfig = &GroupConfig->Adc_ChannelConfig[c];	
+				Adc_SetChannelInputMode(ConfigData->Adc_HWUnit,ChannelConfig->Channel,ChannelConfig->InputMode);
+				Adc_SetChannelSamplingTime(ConfigData->Adc_HWUnit,ChannelConfig->Channel,ChannelConfig->SamplingTime);
 			}
 		}
 	}
 }
 
-Std_ReturnType Adc_SetupResultBuffer (Adc_GroupType Group,Adc_ValueGroupType* DataBufferPtr){
-	//TODO:implement
-}
 
 void Adc_DeInit (void){
 	//TODO:implement
@@ -73,9 +72,6 @@ Adc_StatusType Adc_GetGroupStatus (Adc_GroupType Group){
 	//TODO:implement
 }
 
-Adc_StreamNumSampleType Adc_GetStreamLastPointer (Adc_GroupType Group,Adc_ValueGroupType** PtrToSamplePtr){
-	//TODO:implement
-}
 
 static void Adc_Start(Adc_HWUnitType HWUnit){
 	HW_Unit[HWUnit]->CR &= ~ADC_CR_DEEPPWD;
@@ -348,4 +344,20 @@ static Std_ReturnType Adc_SetTriggerSrc(Adc_HWUnitType HWUnit,Adc_TriggerSourceT
 	return E_OK;
 }
 
+static StdReturnType Adc_ConversionMode(Adc_HWUnit HWUnit,Adc_GroupConvMode ConvMode){
+	if(Adc_Disable(HWUnit) != E_OK){
+		return E_NOT_OK;
+	}
+
+	if(ConvMode == ADC_CONV_MODE_ONESHOT){
+		HW_Unit[HWUnit]->CFGR |= ADC_CFGR_CONT;
+	}
+	else if(ConvMode == ADC_CONV_MODE_CONTINOUS){
+		HW_Unit[HWUnit]->CFGR &= ~ADC_CFGR_CONT;
+	}
+	else{
+		return E_NOT_OK;
+	}
+	return E_OK;
+}
 	
