@@ -19,7 +19,8 @@ static Std_ReturnType Adc_SetChannelInputMode(Adc_HWUnitType HWUnit,Adc_ChannelT
 static Std_ReturnType Adc_SetChannelSamplingTime(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_SamplingTimeType SamplingT);
 static Std_ReturnType Adc_SetGroupChannels(Adc_HWUnitType HWUnit,Adc_ConversionType Conversion,Adc_NumberOfConversionsType NumberOfConversions,const Adc_ChannelConfigType* ChannelConfig);
 static Std_ReturnType Adc_SetTriggerSrc(Adc_HWUnitType HWUnit,Adc_TriggerSourceType Trigger,Adc_HwTriggerSignalType Signal,Adc_ConversionType Conversion, Adc_HwTriggSrcType HwTriggSrc);
-static StdReturnType Adc_ConversionMode(Adc_HWUnit HWUnit,Adc_GroupConvMode ConvMode);
+static Std_ReturnType Adc_ConversionMode(Adc_HWUnitType HWUnit,Adc_GroupConvModeType ConvMode);
+
 static volatile ADC_TypeDef* const HW_Unit[2] = {ADC1,ADC2}; //to get the CMSIS definition
 static const Adc_ConfigDataType* Adc_Data[MAX_ADC_GROUPS];//to hold the ConfigData struct pointer
 
@@ -27,17 +28,29 @@ void Adc_Init (const Adc_ConfigType* ConfigPtr){
 	for(uint8 i = 0; i < ConfigPtr->size; i++){	
 		
 		const Adc_ConfigDataType* ConfigData = &ConfigPtr->Adc_ConfigData[i];
-		//TODO:implement a calibration flag system to avoid repeating the same ADC input type calibration
+		
+		Adc_Start(ConfigData->Adc_HWUnit);
+		Adc_Disable(ConfigData->Adc_HWUnit);
 		Adc_SetResolution(ConfigData->Adc_HWUnit,ConfigData->Adc_Resolution);
 		Adc_DataAligment(ConfigData->Adc_HWUnit,ConfigData->ResultAligment);
+		
 		for(uint8 j = 0; j < ConfigData->Adc_NumberOfGroups; j++){
+			
 			const Adc_GroupConfigType* GroupConfig = &ConfigData->Adc_GroupConfig[j];
 			Adc_Data[GroupConfig->GroupType] = ConfigData; //assign the actual ConfigDatapointer at GroupType position in the array
-					
+			Adc_Calibration(ConfigData->Adc_HWUnit,GroupConfig->ConversionType);
+			if(GroupConfig->ConversionType == ADC_REGULAR_CONVERSION){ //injected mode cannot be converted continuously
+				Adc_ConversionMode(ConfigData->Adc_HWUnit,GroupConfig->ConversionMode);
+			}
+			Adc_SetTriggerSrc(ConfigData->Adc_HWUnit,GroupConfig->TriggerSource,GroupConfig->HwTriggerSignal,GroupConfig->ConversionType,GroupConfig->HwTriggerSrc);
+			Adc_SetGroupChannels(ConfigData->Adc_HWUnit,GroupConfig->ConversionType,GroupConfig->NumberOfConversions, &GroupConfig->Adc_ChannelConfig);
+
 			for(uint8 c = 0; c < GroupConfig->NumberOfConversions; c++){
+				
 				const Adc_ChannelConfigType* ChannelConfig = &GroupConfig->Adc_ChannelConfig[c];	
 				Adc_SetChannelInputMode(ConfigData->Adc_HWUnit,ChannelConfig->Channel,ChannelConfig->InputMode);
 				Adc_SetChannelSamplingTime(ConfigData->Adc_HWUnit,ChannelConfig->Channel,ChannelConfig->SamplingTime);
+			
 			}
 		}
 	}
@@ -236,10 +249,11 @@ static Std_ReturnType Adc_SetChannelSamplingTime(Adc_HWUnitType HWUnit,Adc_Chann
 
 static Std_ReturnType Adc_SetGroupChannels(Adc_HWUnitType HWUnit,Adc_ConversionType Conversion,Adc_NumberOfConversionsType NumberOfConversions,const Adc_ChannelConfigType* ChannelConfig){
 		
+	if((HW_Unit[HWUnit]->CR & ADC_CR_ADEN) == ADC_CR_ADEN){
 		if(Adc_Disable(HWUnit) != E_OK){
 			return E_NOT_OK;
 		}
-
+	}
 		if(Conversion == ADC_REGULAR_CONVERSION){
 			HW_Unit[HWUnit]->SQR1 &= ~ADC_SQR1_L;	
 			HW_Unit[HWUnit]->SQR1 |= (NumberOfConversions << ADC_SQR1_L_Pos);
@@ -277,8 +291,10 @@ static Std_ReturnType Adc_SetGroupChannels(Adc_HWUnitType HWUnit,Adc_ConversionT
 
 static Std_ReturnType Adc_SetTriggerSrc(Adc_HWUnitType HWUnit,Adc_TriggerSourceType Trigger,Adc_HwTriggerSignalType Signal,Adc_ConversionType Conversion, Adc_HwTriggSrcType HwTriggSrc){
 	
-	if(Adc_Disable(HWUnit) != E_OK){
-		return E_NOT_OK;
+	if((HW_Unit[HWUnit]->CR & ADC_CR_ADEN) == ADC_CR_ADEN){
+		if(Adc_Disable(HWUnit) != E_OK){
+			return E_NOT_OK;
+		}
 	}
 
 	if(Conversion == ADC_REGULAR_CONVERSION){
@@ -344,15 +360,18 @@ static Std_ReturnType Adc_SetTriggerSrc(Adc_HWUnitType HWUnit,Adc_TriggerSourceT
 	return E_OK;
 }
 
-static StdReturnType Adc_ConversionMode(Adc_HWUnit HWUnit,Adc_GroupConvMode ConvMode){
-	if(Adc_Disable(HWUnit) != E_OK){
-		return E_NOT_OK;
+static Std_ReturnType Adc_ConversionMode(Adc_HWUnitType HWUnit,Adc_GroupConvModeType ConvMode){
+		
+	if((HW_Unit[HWUnit]->CR & ADC_CR_ADEN) == ADC_CR_ADEN){
+		if(Adc_Disable(HWUnit) != E_OK){
+			return E_NOT_OK;
+		}
 	}
 
 	if(ConvMode == ADC_CONV_MODE_ONESHOT){
 		HW_Unit[HWUnit]->CFGR |= ADC_CFGR_CONT;
 	}
-	else if(ConvMode == ADC_CONV_MODE_CONTINOUS){
+	else if(ConvMode == ADC_CONV_MODE_CONTINUOUS){
 		HW_Unit[HWUnit]->CFGR &= ~ADC_CFGR_CONT;
 	}
 	else{
