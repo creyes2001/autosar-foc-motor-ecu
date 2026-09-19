@@ -186,7 +186,7 @@ typedef struct{
 	Adc_ConversionTimeType ConversionTimeType;
 	Adc_TriggerSourceType TriggerSource;
 	Adc_HwTriggerSignalType HwTriggerSignal;
-	Adc_HwTriggerSrcType HwTriggerSrc;
+	Adc_HwTriggSrcType HwTriggerSrc;
 	Adc_GroupAccessModeType GroupAccessMode;
 	Adc_StreamBufferModeType StreamBufferMode;
 	Adc_StreamNumSampleType StreamNumSample;
