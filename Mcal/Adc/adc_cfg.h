@@ -196,7 +196,7 @@ typedef struct{
 typedef struct{
 	Adc_HWUnitType Adc_HWUnit;
 	Adc_ResolutionType Adc_Resolution;
-	Adc_ResultAligmentType ResultAligment;
+	Adc_ResultAligmentType Adc_ResultAligment;
 	const Adc_GroupConfigType* Adc_GroupConfig;
 	Adc_NumberOfGroupsType Adc_NumberOfGroups;
 }Adc_ConfigDataType;
@@ -207,6 +207,6 @@ typedef struct{
 	uint8 size;
 }Adc_ConfigType;
 
-extern const Adc_ConfigType* Adc_Config;
+extern const Adc_ConfigType Adc_Config;
 
 #endif //ADC_CFG_H
