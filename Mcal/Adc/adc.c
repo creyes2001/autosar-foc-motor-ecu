@@ -32,18 +32,19 @@ void Adc_Init (const Adc_ConfigType* ConfigPtr){
 		Adc_Start(ConfigData->Adc_HWUnit);
 		Adc_Disable(ConfigData->Adc_HWUnit);
 		Adc_SetResolution(ConfigData->Adc_HWUnit,ConfigData->Adc_Resolution);
-		Adc_DataAligment(ConfigData->Adc_HWUnit,ConfigData->ResultAligment);
+		Adc_DataAligment(ConfigData->Adc_HWUnit,ConfigData->Adc_ResultAligment);
 		
 		for(uint8 j = 0; j < ConfigData->Adc_NumberOfGroups; j++){
 			
 			const Adc_GroupConfigType* GroupConfig = &ConfigData->Adc_GroupConfig[j];
 			Adc_Data[GroupConfig->GroupType] = ConfigData; //assign the actual ConfigDatapointer at GroupType position in the array
+
 			Adc_Calibration(ConfigData->Adc_HWUnit,GroupConfig->ConversionType);
 			if(GroupConfig->ConversionType == ADC_REGULAR_CONVERSION){ //injected mode cannot be converted continuously
 				Adc_ConversionMode(ConfigData->Adc_HWUnit,GroupConfig->ConversionMode);
 			}
 			Adc_SetTriggerSrc(ConfigData->Adc_HWUnit,GroupConfig->TriggerSource,GroupConfig->HwTriggerSignal,GroupConfig->ConversionType,GroupConfig->HwTriggerSrc);
-			Adc_SetGroupChannels(ConfigData->Adc_HWUnit,GroupConfig->ConversionType,GroupConfig->NumberOfConversions, &GroupConfig->Adc_ChannelConfig);
+			Adc_SetGroupChannels(ConfigData->Adc_HWUnit,GroupConfig->ConversionType,GroupConfig->NumberOfConversions, GroupConfig->Adc_ChannelConfig);
 
 			for(uint8 c = 0; c < GroupConfig->NumberOfConversions; c++){
 				
@@ -62,11 +63,30 @@ void Adc_DeInit (void){
 }
 
 void Adc_StartGroupConversion (Adc_GroupType Group){
-	//TODO:implement
+	if(Adc_Data[Group]->Adc_GroupConfig[Group].ConversionType == ADC_REGULAR_CONVERSION)
+	{
+		HW_Unit[Adc_Data[Group]->Adc_HWUnit]->CR |= ADC_CR_ADSTART;
+	}
+	if(Adc_Data[Group]->Adc_GroupConfig[Group].ConversionType == ADC_INJECTED_CONVERSION)
+	{
+		HW_Unit[Adc_Data[Group]->Adc_HWUnit]->CR |= ADC_CR_JADSTART;
+	}
 }
 
 void Adc_StopGroupConversion (Adc_GroupType Group){
-	//TODO:implement
+	if(Adc_Data[Group]->Adc_GroupConfig[Group].ConversionType == ADC_REGULAR_CONVERSION)
+	{
+		HW_Unit[Adc_Data[Group]->Adc_HWUnit]->CR |= ADC_CR_ADSTP;
+		Mcal_WaitBitTimeout(&HW_Unit[Adc_Data[Group]->Adc_HWUnit]->CR,ADC_CR_ADSTART,0U,ADC_STOP_TIMEOUT_US);
+
+	}
+	if(Adc_Data[Group]->Adc_GroupConfig[Group].ConversionType == ADC_INJECTED_CONVERSION)
+	{
+		HW_Unit[Adc_Data[Group]->Adc_HWUnit]->CR |= ADC_CR_JADSTP;
+		Mcal_WaitBitTimeout(&HW_Unit[Adc_Data[Group]->Adc_HWUnit]->CR,ADC_CR_JADSTART,0U,ADC_JSTOP_TIMEOUT_US);
+
+	}
+
 }
 
 Std_ReturnType Adc_ReadGroup (Adc_GroupType Group,Adc_ValueGroupType* DataBufferPtr){
