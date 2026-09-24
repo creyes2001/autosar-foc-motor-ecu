@@ -101,7 +101,7 @@ typedef uint8 Adc_HWUnitType;
 #define ADC_EXT_TRG30	((Adc_HwTriggSrcType)0x1E)
 #define ADC_EXT_TRG31	((Adc_HwTriggSrcType)0x1F)
 
-typedef uint8 Adc_ValueGroupType;
+typedef uint16 Adc_ValueGroupType;
 typedef uint8 Adc_PrescaleType;
 typedef uint8 Adc_ConversionTimeType;
 typedef uint8 Adc_SamplingTimeType;
