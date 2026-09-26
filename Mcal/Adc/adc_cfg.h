@@ -101,6 +101,19 @@ typedef uint8 Adc_HWUnitType;
 #define ADC_EXT_TRG30	((Adc_HwTriggSrcType)0x1E)
 #define ADC_EXT_TRG31	((Adc_HwTriggSrcType)0x1F)
 
+#define ADC_CLK_PRESC_1 ((Adc_ClockPrescType)0x00)
+#define ADC_CLK_PRESC_2 ((Adc_ClockPrescType)0x01)
+#define ADC_CLK_PRESC_4 ((Adc_ClockPrescType)0x02)
+#define ADC_CLK_PRESC_6 ((Adc_ClockPrescType)0x03)
+#define ADC_CLK_PRESC_8 ((Adc_ClockPrescType)0x04)
+#define ADC_CLK_PRESC_10 ((Adc_ClockPrescType)0x05)
+#define ADC_CLK_PRESC_12 ((Adc_ClockPrescType)0x06)
+#define ADC_CLK_PRESC_16 ((Adc_ClockPrescType)0x07)
+#define ADC_CLK_PRESC_32 ((Adc_ClockPrescType)0x08)
+#define ADC_CLK_PRESC_64 ((Adc_ClockPrescType)0x09)
+#define ADC_CLK_PRESC_128 ((Adc_ClockPrescType)0x0A)
+#define ADC_CLK_PRESC_256 ((Adc_ClockPrescType)0x0B)
+
 typedef uint16 Adc_ValueGroupType;
 typedef uint8 Adc_PrescaleType;
 typedef uint8 Adc_ConversionTimeType;
@@ -111,6 +124,7 @@ typedef uint8 Adc_StreamNumSampleType;
 typedef uint8 Adc_NumberOfConversionsType;
 typedef uint8 Adc_NumberOfGroupsType;
 typedef uint8 Adc_HwTriggSrcType;
+typedef uint8 Adc_ClockPrescType;
 
 typedef enum{
 	ADC_INPUT_SINGLE_ENDED = 0x00,
@@ -170,6 +184,14 @@ typedef enum{
 	ADC_ALIGN_RIGHT = 0x01
 }Adc_ResultAligmentType;
 
+typedef enum{
+	ADC_CLK_ASYN = 0x00,
+	ADC_CLK_SYN_PRE1 = 0x01, //must be selected only if HPRE[3:0] = 0xxx
+	ADC_CLK_SYN_PRE2 = 0x02,
+	ADC_CLK_SYN_PRE4 = 0x03
+}Adc_ClockSrcType;
+	
+
 //struct for channel specific configuration data
 typedef struct{
 	Adc_ChannelType Channel;
@@ -204,6 +226,8 @@ typedef struct{
 //struct for ADC configuration data
 typedef struct{
 	const Adc_ConfigDataType* Adc_ConfigData; 
+	Adc_ClockSrcType Adc_ClkSrc;
+	Adc_ClockPrescType Adc_Presc;
 	uint8 size;
 }Adc_ConfigType;
 
