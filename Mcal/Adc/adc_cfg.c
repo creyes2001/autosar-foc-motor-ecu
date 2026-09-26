@@ -35,5 +35,6 @@ const Adc_ConfigDataType Adc_ConfigData[] = {
 
 const Adc_ConfigType Adc_Config = {
 	.Adc_ConfigData = Adc_ConfigData,
+	.Adc_ClkSrc = ADC_CLK_SYN_PRE2,
 	.size = 1
 };
