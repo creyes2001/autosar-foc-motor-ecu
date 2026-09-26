@@ -20,6 +20,7 @@ static Std_ReturnType Adc_SetChannelSamplingTime(Adc_HWUnitType HWUnit,Adc_Chann
 static Std_ReturnType Adc_SetGroupChannels(Adc_HWUnitType HWUnit,Adc_ConversionType Conversion,Adc_NumberOfConversionsType NumberOfConversions,const Adc_ChannelConfigType* ChannelConfig);
 static Std_ReturnType Adc_SetTriggerSrc(Adc_HWUnitType HWUnit,Adc_TriggerSourceType Trigger,Adc_HwTriggerSignalType Signal,Adc_ConversionType Conversion, Adc_HwTriggSrcType HwTriggSrc);
 static Std_ReturnType Adc_ConversionMode(Adc_HWUnitType HWUnit,Adc_GroupConvModeType ConvMode);
+static Std_ReturnType Adc_CLockSourceConfig(Adc_ClockSrcType ClkSrc, Adc_ClockPrescType Presc);
 
 static volatile ADC_TypeDef* const HW_Unit[2] = {ADC1,ADC2}; //to get the CMSIS definition
 static const Adc_ConfigDataType* Adc_Data[MAX_ADC_GROUPS];//to hold the ConfigData struct pointer
@@ -31,6 +32,7 @@ void Adc_Init (const Adc_ConfigType* ConfigPtr){
 		
 		Adc_Start(ConfigData->Adc_HWUnit);
 		Adc_Disable(ConfigData->Adc_HWUnit);
+		Adc_CLockSourceConfig(ConfigPtr->Adc_ClkSrc,ConfigPtr->Adc_Presc);
 		Adc_SetResolution(ConfigData->Adc_HWUnit,ConfigData->Adc_Resolution);
 		Adc_DataAligment(ConfigData->Adc_HWUnit,ConfigData->Adc_ResultAligment);
 		
@@ -431,3 +433,23 @@ static Std_ReturnType Adc_ConversionMode(Adc_HWUnitType HWUnit,Adc_GroupConvMode
 	return E_OK;
 }
 	
+static Std_ReturnType Adc_CLockSourceConfig(Adc_ClockSrcType ClkSrc, Adc_ClockPrescType Presc){
+	if(ClkSrc == ADC_CLK_ASYN){
+		ADC12_COMMON->CCR &= ~ADC_CCR_CKMODE;
+		ADC12_COMMON->CCR |= (Presc << ADC_CCR_PRESC_Pos);
+	}
+	else if(ClkSrc == ADC_CLK_SYN_PRE1){
+		ADC12_COMMON->CCR |= ADC_CCR_CKMODE_0;
+	}
+	else if(ClkSrc == ADC_CLK_SYN_PRE2){
+		ADC12_COMMON->CCR |= ADC_CCR_CKMODE_1;
+	}
+	else if(ClkSrc == ADC_CLK_SYN_PRE4){
+		ADC12_COMMON->CCR |= ADC_CCR_CKMODE;
+	}
+	else{
+		return E_NOT_OK;
+	}
+
+	return E_OK;
+}
