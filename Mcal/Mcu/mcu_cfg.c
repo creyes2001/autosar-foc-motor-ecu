@@ -15,7 +15,7 @@ static const Mcu_PllConfigType Mcu_PllConfig_0 = {
 static const Mcu_PeripherialConfigType Mcu_PeriphClkConfig_0 = {
 	.APB1_PRE = 0,
 	.APB2_PRE = 0,
-	.AHB_PRE = 0
+	.AHB_PRE = 8	//sysclk divided by 2
 };
 
 static const Mcu_ClockSettingsConfigType McuClockSettingConfig[] = {
