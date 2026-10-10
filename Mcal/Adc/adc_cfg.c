@@ -2,9 +2,9 @@
 
 const Adc_ChannelConfigType Adc_ChannelConfig[] = {
 	{
-		.Channel = ADC1_CH1,
+		.Channel = ADC1_CH8,
 		.InputMode = ADC_INPUT_SINGLE_ENDED,
-		.SamplingTime = ADC_6_5_CLOCK_CYCLES
+		.SamplingTime = ADC_47_5_CLOCK_CYCLES
 	}
 };
 
@@ -15,7 +15,7 @@ const Adc_GroupConfigType Adc_GroupConfig[] = {
 		.ConversionType = ADC_INJECTED_CONVERSION,
 		.ValueGroup = 0,
 		.ConversionMode = ADC_CONV_MODE_ONESHOT,
-		.TriggerSource = ADC_TRIGG_SRC_HW,
+		.TriggerSource = ADC_TRIGG_SRC_SW,
 		.HwTriggerSignal = ADC_HW_TRIG_RISING_EDGE,
 		.HwTriggerSrc = ADC_EXT_TRG,
 		.GroupAccessMode = ADC_ACCESS_MODE_SINGLE,
