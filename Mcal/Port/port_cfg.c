@@ -22,10 +22,19 @@ const Port_ConfigDataType Port_CfgData[] = {
 		.Pin_ResistorType = PORT_PIN_RESISTOR_DISABLE,
 		.DirectionChangable = FALSE,
 		.ModeChangable = FALSE
+	},
+	{
+		//PC2  ADC12_IN8 pin configuration 
+		.PinId = PORT_C_PIN_2,
+		.Pin_Mode = PORT_PIN_MODE_ANALOG,
+		.Pin_Direction = PORT_PIN_IN,
+		.DirectionChangable = FALSE,
+		.Pin_ResistorType = PORT_PIN_RESISTOR_DISABLE,
+		.ModeChangable = FALSE
 	}
 };
 
 const Port_ConfigType Port_Config = {
 	.Port_ConfigData = Port_CfgData,
-	.size = 2
+	.size = 3
 };
