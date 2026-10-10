@@ -13,7 +13,7 @@ static void Adc_Stop(Adc_HWUnitType HWUnit);
 static Std_ReturnType Adc_Enable(Adc_HWUnitType HWUnit); 
 static Std_ReturnType Adc_Disable(Adc_HWUnitType HWUnit); 
 static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolution); 
-static Std_ReturnType Adc_Calibration(Adc_HWUnitType HWUnit,Adc_ConversionType Conversion);//must be called after Adc_Start
+static Std_ReturnType Adc_Calibration(Adc_HWUnitType HWUnit,Adc_InputModeType InputMode);//must be called after Adc_Start
 static Std_ReturnType Adc_DataAligment(Adc_HWUnitType HWUnit,Adc_ResultAligmentType ResultAligment);
 static Std_ReturnType Adc_SetChannelInputMode(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_InputModeType InputM);//must be called when ADC is disable
 static Std_ReturnType Adc_SetChannelSamplingTime(Adc_HWUnitType HWUnit,Adc_ChannelType ChannelId,Adc_SamplingTimeType SamplingT);
@@ -41,7 +41,7 @@ void Adc_Init (const Adc_ConfigType* ConfigPtr){
 			const Adc_GroupConfigType* GroupConfig = &ConfigData->Adc_GroupConfig[j];
 			Adc_Data[GroupConfig->GroupType] = ConfigData; //assign the actual ConfigDatapointer at GroupType position in the array
 
-			Adc_Calibration(ConfigData->Adc_HWUnit,GroupConfig->ConversionType);
+
 			if(GroupConfig->ConversionType == ADC_REGULAR_CONVERSION){ //injected mode cannot be converted continuously
 				Adc_ConversionMode(ConfigData->Adc_HWUnit,GroupConfig->ConversionMode);
 			}
@@ -53,10 +53,13 @@ void Adc_Init (const Adc_ConfigType* ConfigPtr){
 				const Adc_ChannelConfigType* ChannelConfig = &GroupConfig->Adc_ChannelConfig[c];	
 				Adc_SetChannelInputMode(ConfigData->Adc_HWUnit,ChannelConfig->Channel,ChannelConfig->InputMode);
 				Adc_SetChannelSamplingTime(ConfigData->Adc_HWUnit,ChannelConfig->Channel,ChannelConfig->SamplingTime);
+			Adc_Calibration(ConfigData->Adc_HWUnit,ChannelConfig->InputMode);
 			
 			}
 		}
+		Adc_Enable(ConfigData->Adc_HWUnit);
 	}
+
 }
 
 
@@ -92,7 +95,7 @@ void Adc_StopGroupConversion (Adc_GroupType Group){
 }
 
 Std_ReturnType Adc_ReadGroup (Adc_GroupType Group,Adc_ValueGroupType* DataBufferPtr){
-	volatile static uint8 i = 0;
+	static volatile uint8 i = 0;
 	if(Adc_Data[Group]->Adc_GroupConfig[Group].ConversionType ==  ADC_REGULAR_CONVERSION){
 		DataBufferPtr[i] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->DR;
 		i++;
@@ -140,9 +143,11 @@ Adc_StatusType Adc_GetGroupStatus (Adc_GroupType Group){
 
 
 static void Adc_Start(Adc_HWUnitType HWUnit){
+	
+
 	HW_Unit[HWUnit]->CR &= ~ADC_CR_DEEPPWD;
 	HW_Unit[HWUnit]->CR |= ADC_CR_ADVREGEN; 
-	Mcal_DelayUs(40); //startup delay time
+	Mcal_DelayUs(100); //startup delay time
 }
 
 static void Adc_Stop(Adc_HWUnitType HWUnit){
@@ -179,11 +184,11 @@ static Std_ReturnType Adc_Disable(Adc_HWUnitType HWUnit){
 			return E_NOT_OK;
 		}
 	}
-	
-	HW_Unit[HWUnit]->CR |= ADC_CR_ADDIS;
-
-	if(Mcal_WaitBitTimeout(&HW_Unit[HWUnit]->CR,ADC_CR_ADEN,0U,ADC_DISABLE_TIMEOUT_US) != E_OK){
+	if((HW_Unit[HWUnit]->CR & ADC_CR_ADEN) != 0U){	
+		HW_Unit[HWUnit]->CR |= ADC_CR_ADDIS;
+		if(Mcal_WaitBitTimeout(&HW_Unit[HWUnit]->CR,ADC_CR_ADEN,0U,ADC_DISABLE_TIMEOUT_US) != E_OK){
 		return E_NOT_OK;
+		}
 	}
 	return E_OK;
 }
@@ -213,17 +218,17 @@ static void Adc_SetResolution(Adc_HWUnitType HWUnit,Adc_ResolutionType Resolutio
 	}
 }
 
-static Std_ReturnType Adc_Calibration(Adc_HWUnitType HWUnit,Adc_ConversionType Conversion){
+static Std_ReturnType Adc_Calibration(Adc_HWUnitType HWUnit,Adc_InputModeType InputMode){
 	if((HW_Unit[HWUnit]->CR & ADC_CR_ADEN) == ADC_CR_ADEN){
 		if(Adc_Disable(HWUnit) != E_OK){
 			return E_NOT_OK;
 		}
 	}
 
-	if(Conversion == ADC_INPUT_SINGLE_ENDED){
+	if(InputMode == ADC_INPUT_SINGLE_ENDED){
 		HW_Unit[HWUnit]->CR &= ~ADC_CR_ADCALDIF; 
 	}
-	else if(Conversion == ADC_INPUT_DIFFERENTIAL){
+	else if(InputMode == ADC_INPUT_DIFFERENTIAL){
 		HW_Unit[HWUnit]->CR |= ADC_CR_ADCALDIF; 
 	}
 	else{
