@@ -1,0 +1,51 @@
+#include "pwm.h"
+
+static void Pwm_ClockConfig(PwmTimHwUnitType PwmTimHwUnit,Pwm_CLkSrcType ClkSrc,Pwm_PrescType Presc);
+
+static volatile TIM_TypeDef* PwmTim[2] = {TIM1,TIM8};
+
+void Pwm_Init(const Pwm_ConfigType* ConfigPtr){
+	
+	if((PwmTim[ConfigPtr->HwUnit]->CR1 & TIM_CR1_CEN) != 0U){
+		PwmTim[ConfigPtr->HwUnit]->CR1 &= ~TIM_CR1_CEN; 
+	}
+
+	Pwm_ClockConfig(ConfigPtr->HwUnit,ConfigPtr->ClkSrc,ConfigPtr->Presc);
+	
+}
+
+void Pwm_Start(PwmTimHwUnitType PwmTimHwUnit){
+	
+}
+
+void Pwm_Stop(PwmTimHwUnitType PwmTimHwUnit){
+
+}
+
+void Pwm_SetDutyCycle(PwmTimHwUnitType PwmTimHwUnit,Pwm_ChannelType ChannelNumber,uint16 DutuCycle){
+
+}
+
+void Pwm_SetPeriodAndDuty(PwmTimHwUnitType PwmTimHwUnit,Pwm_ChannelType ChannelNumber, Pwm_PeriodType Period, uint16 DutyCyle){
+
+}
+
+static void Pwm_ClockConfig(PwmTimHwUnitType PwmTimHwUnit,Pwm_CLkSrcType ClkSrc,Pwm_PrescType Presc){
+	switch(ClkSrc){
+		case PWM_INTERNAL_CLOCK:
+			PwmTim[PwmTimHwUnit]->SMCR &= ~TIM_SMCR_SMS;		
+			break;
+		case PWM_EXTERNAL_CLOCK_MODE1:
+			//TODO: implement 
+			break;
+		case PWM_EXTERNAL_CLOCK_MODE2:
+			//TODO: implement 
+			break;
+		case PWM_ENCODER_MODE:
+			//TODO: implement 
+			break;
+	}
+
+	PwmTim[PwmTimHwUnit]->PSC =(uint32)Presc;
+
+}
