@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug G431RB",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceFolder}/build/foc.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "openocdPath": "/usr/bin/openocd",
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32g4x.cfg"
+            ],
+            "svdFile": "${workspaceFolder}/STM32G431.svd",
+            "runToEntryPoint": "main",
+            "showDevDebugOutput": "raw"
+        }
+    ]
+}
