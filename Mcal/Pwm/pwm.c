@@ -2,6 +2,8 @@
 
 static void Pwm_ClockConfig(PwmTimHwUnitType PwmTimHwUnit,Pwm_CLkSrcType ClkSrc,Pwm_PrescType Presc);
 
+static void Pwm_SetCounterMode(PwmTimHwUnitType PwmTimHwUnit,Pwm_ModeType Mode,Pwm_EdgeNotificationType Notification);
+
 static volatile TIM_TypeDef* PwmTim[2] = {TIM1,TIM8};
 
 void Pwm_Init(const Pwm_ConfigType* ConfigPtr){
@@ -11,7 +13,7 @@ void Pwm_Init(const Pwm_ConfigType* ConfigPtr){
 	}
 
 	Pwm_ClockConfig(ConfigPtr->HwUnit,ConfigPtr->ClkSrc,ConfigPtr->Presc);
-	
+		
 }
 
 void Pwm_Start(PwmTimHwUnitType PwmTimHwUnit){
@@ -44,8 +46,35 @@ static void Pwm_ClockConfig(PwmTimHwUnitType PwmTimHwUnit,Pwm_CLkSrcType ClkSrc,
 		case PWM_ENCODER_MODE:
 			//TODO: implement 
 			break;
+		default:
+			break;
 	}
 
 	PwmTim[PwmTimHwUnit]->PSC =(uint32)Presc;
 
+}
+
+static void Pwm_SetCounterMode(PwmTimHwUnitType PwmTimHwUnit,Pwm_ModeType Mode,Pwm_EdgeNotificationType Notification){
+	switch(Mode){
+		case PWM_RIGTH_ALIGNED:
+			//TODO: implement
+			break;
+		case PWM_LEFT_ALIGNED:
+			//TODO: implement
+			break;
+		case PWM_CENTER_ALIGNED:
+			PwmTim[PwmTimHwunit]->CR1 &= ~TIM_CR1_CMS; //clear 
+			if(Notification == PWM_RISING_EDGE){
+				PwmTim[PwmTimHwunit]->CR1 |= TIM_CR1_CMS_1; 
+			}
+			else if(Notification == PWM_FALLING_EDGE){
+				PwmTim[PwmTimHwunit]->CR1 |= TIM_CR1_CMS_0; 
+			}
+			else{
+				PwmTim[PwmTimHwunit]->CR1 |= TIM_CR1_CMS; 
+			}
+			break;
+		default:
+			break;
+	}
 }
