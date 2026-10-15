@@ -1,8 +1,8 @@
 #include "pwm.h"
 
-static void Pwm_ClockConfig(PwmTimHwUnitType PwmTimHwUnit,Pwm_CLkSrcType ClkSrc,Pwm_PrescType Presc);
-
-static void Pwm_SetCounterMode(PwmTimHwUnitType PwmTimHwUnit,Pwm_ModeType Mode,Pwm_EdgeNotificationType Notification);
+static Std_ReturnType Pwm_ClockConfig(PwmTimHwUnitType PwmTimHwUnit,Pwm_CLkSrcType ClkSrc,Pwm_PrescType Presc);
+static Std_ReturnType Pwm_SetCounterMode(PwmTimHwUnitType PwmTimHwUnit,Pwm_ModeType Mode,Pwm_EdgeNotificationType Notification);
+static Std_ReturnType Pwm_SetUpdateRate(PwmTimHwUnitType PwmTimHwUnit,Pwm_UpdateRateType UpdateRate);
 
 static volatile TIM_TypeDef* PwmTim[2] = {TIM1,TIM8};
 
@@ -32,7 +32,7 @@ void Pwm_SetPeriodAndDuty(PwmTimHwUnitType PwmTimHwUnit,Pwm_ChannelType ChannelN
 
 }
 
-static void Pwm_ClockConfig(PwmTimHwUnitType PwmTimHwUnit,Pwm_CLkSrcType ClkSrc,Pwm_PrescType Presc){
+static Std_ReturnType Pwm_ClockConfig(PwmTimHwUnitType PwmTimHwUnit,Pwm_CLkSrcType ClkSrc,Pwm_PrescType Presc){
 	switch(ClkSrc){
 		case PWM_INTERNAL_CLOCK:
 			PwmTim[PwmTimHwUnit]->SMCR &= ~TIM_SMCR_SMS;		
@@ -47,14 +47,15 @@ static void Pwm_ClockConfig(PwmTimHwUnitType PwmTimHwUnit,Pwm_CLkSrcType ClkSrc,
 			//TODO: implement 
 			break;
 		default:
+			return E_NOT_OK;
 			break;
 	}
 
 	PwmTim[PwmTimHwUnit]->PSC =(uint32)Presc;
-
+	return E_OK;
 }
 
-static void Pwm_SetCounterMode(PwmTimHwUnitType PwmTimHwUnit,Pwm_ModeType Mode,Pwm_EdgeNotificationType Notification){
+static Std_ReturnType Pwm_SetCounterMode(PwmTimHwUnitType PwmTimHwUnit,Pwm_ModeType Mode,Pwm_EdgeNotificationType Notification){
 	switch(Mode){
 		case PWM_RIGTH_ALIGNED:
 			//TODO: implement
@@ -70,11 +71,23 @@ static void Pwm_SetCounterMode(PwmTimHwUnitType PwmTimHwUnit,Pwm_ModeType Mode,P
 			else if(Notification == PWM_FALLING_EDGE){
 				PwmTim[PwmTimHwunit]->CR1 |= TIM_CR1_CMS_0; 
 			}
-			else{
+			else if(Notification == PWM_BOTH_EDGES){
 				PwmTim[PwmTimHwunit]->CR1 |= TIM_CR1_CMS; 
 			}
+			else{
+				return E_NOT_OK;
 			break;
 		default:
+			return E_NOT_OK;
 			break;
 	}
+			return E_OK;
+}
+
+static Std_ReturnType Pwm_SetUpdateRate(PwmTimHwUnitType PwmTimHwUnit,Pwm_UpdateRateType UpdateRate){
+	if(UpdateRate > 0xFFFFu){
+		return E_NOT_OK;
+	}
+	PwmTim[PwmTimHwunit]->RCR = (uint32)UpdateRate; 
+	return E_OK;
 }
