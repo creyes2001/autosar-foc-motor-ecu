@@ -12,6 +12,7 @@ INCLUDE_DIRS = $(STM_INCLUDE_DIR)\
 			   ./Mcal/Mcu\
 			   ./Mcal/Port\
 			   ./Mcal/Adc\
+			   ./Mcal/Pwm\
 			   ./Common
  
 #=====================TOOLCHAIN=================================
@@ -30,6 +31,8 @@ SOURCES = main.c\
 		  Mcal/Port/port_cfg.c\
 		  Mcal/Adc/adc.c\
 		  Mcal/Adc/adc_cfg.c\
+		  Mcal/Pwm/pwm.c\
+		  Mcal/Pwm/pwm_cfg.c\
 		  $(STM_STARTUP_DIR)/system_stm32g4xx.c
  
 ASM_SRCS = $(STM_STARTUP_DIR)/startup_stm32g431xx.s\
@@ -38,7 +41,8 @@ vpath %.c . \
 	Mcal\
 	Mcal/Mcu\
 	Mcal/Port\
-	Mcal/Adc
+	Mcal/Adc\
+	Mcal/Pwm
 
 C_OBJS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(notdir $(SOURCES)))
 ASM_OBJS = $(patsubst %.s,$(OBJ_DIR)/%.o,$(notdir $(ASM_SRCS)))
