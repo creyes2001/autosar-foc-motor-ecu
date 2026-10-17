@@ -12,20 +12,26 @@ static volatile TIM_TypeDef* PwmTim[2] = {TIM1,TIM8};
 
 void Pwm_Init(const Pwm_ConfigType* ConfigPtr){
 	
-	if((PwmTim[ConfigPtr->HwUnit]->CR1 & TIM_CR1_CEN) != 0U){
-		PwmTim[ConfigPtr->HwUnit]->CR1 &= ~TIM_CR1_CEN; 
-	}
-
+	
 	Pwm_ClockConfig(ConfigPtr->HwUnit,ConfigPtr->ClkSrc,ConfigPtr->Presc);
-		
+	Pwm_SetCounterMode(ConfigPtr->HwUnit,);
+	Pwm_SetUpdateRate(ConfigPtr->HwUnit,);
+	Pwm_ChannelConfig(ConfigPtr->HwUnit,);
+
 	PwmTim[ConfigPtr->HwUnit]->EGR |= TIM_EGR_UG;	//set UG TIMxEGR to trasfer preload to shadow register manually
 }
 
 void Pwm_Start(Pwm_TimHwUnitType PwmTimHwUnit){
+	if((PwmTim[PwmTimHwUnit]->CR1 & TIM_CR1_CEN) != 1U){
+		PwmTim[PwmTimHwUnit]->CR1 |= TIM_CR1_CEN; 
+	}
 	
 }
 
 void Pwm_Stop(Pwm_TimHwUnitType PwmTimHwUnit){
+	if((PwmTim[PwmTimHwUnit]->CR1 & TIM_CR1_CEN) != 0U){
+		PwmTim[PwmTimHwUnit]->CR1 &= ~TIM_CR1_CEN; 
+	}
 
 }
 
