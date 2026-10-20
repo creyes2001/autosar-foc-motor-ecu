@@ -11,16 +11,16 @@ static Std_ReturnType Pwm_ChannelConfig(Pwm_TimHwUnitType PwmTimHwUnit,Pwm_Numbe
 static volatile TIM_TypeDef* PwmTim[2] = {TIM1,TIM8};
 
 void Pwm_Init(const Pwm_ConfigType* ConfigPtr){
-	
+
+	Pwm_Stop(ConfigPtr->HwUnit);
 	
 	Pwm_ClockConfig(ConfigPtr->HwUnit,ConfigPtr->ClkSrc,ConfigPtr->Presc);
-	Pwm_SetCounterMode(ConfigPtr->HwUnit,);
-	Pwm_SetUpdateRate(ConfigPtr->HwUnit,);
-	Pwm_ChannelConfig(ConfigPtr->HwUnit,);
-
+	Pwm_SetCounterMode(ConfigPtr->HwUnit,ConfigPtr->Mode,ConfigPtr->EdgeNotification);
+	Pwm_SetUpdateRate(ConfigPtr->HwUnit,ConfigPtr->UpdateRate);
+	Pwm_ChannelConfig(ConfigPtr->HwUnit,ConfigPtr->NumberOfChannels,ConfigPtr->Pwm_ChannelConfig);
 	PwmTim[ConfigPtr->HwUnit]->EGR |= TIM_EGR_UG;	//set UG TIMxEGR to trasfer preload to shadow register manually
+	Pwm_Start(ConfigPtr->HwUnit);
 }
-
 void Pwm_Start(Pwm_TimHwUnitType PwmTimHwUnit){
 	if((PwmTim[PwmTimHwUnit]->CR1 & TIM_CR1_CEN) != 1U){
 		PwmTim[PwmTimHwUnit]->CR1 |= TIM_CR1_CEN; 
