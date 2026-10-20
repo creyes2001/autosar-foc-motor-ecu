@@ -18,6 +18,7 @@ void Pwm_Init(const Pwm_ConfigType* ConfigPtr){
 	Pwm_SetCounterMode(ConfigPtr->HwUnit,ConfigPtr->Mode,ConfigPtr->EdgeNotification);
 	Pwm_SetUpdateRate(ConfigPtr->HwUnit,ConfigPtr->UpdateRate);
 	Pwm_ChannelConfig(ConfigPtr->HwUnit,ConfigPtr->NumberOfChannels,ConfigPtr->Pwm_ChannelConfig);
+	
 	PwmTim[ConfigPtr->HwUnit]->EGR |= TIM_EGR_UG;	//set UG TIMxEGR to trasfer preload to shadow register manually
 	Pwm_Start(ConfigPtr->HwUnit);
 }
@@ -35,12 +36,45 @@ void Pwm_Stop(Pwm_TimHwUnitType PwmTimHwUnit){
 
 }
 
-void Pwm_SetDutyCycle(Pwm_TimHwUnitType PwmTimHwUnit,Pwm_ChannelType ChannelNumber,uint16 DutuCycle){
-
+void Pwm_SetDutyCycle(Pwm_TimHwUnitType PwmTimHwUnit,Pwm_ChannelType ChannelNumber,uint16 DutyCycle){
+	switch(ChannelNumber){
+		case PWM_CHANNEL1:
+			PwmTim[PwmTimHwUnit]->CCR1 = (uint32)DutyCycle;
+			break;
+		case PWM_CHANNEL2:
+			PwmTim[PwmTimHwUnit]->CCR2 = (uint32)DutyCycle;
+			break;
+		case PWM_CHANNEL3:
+			PwmTim[PwmTimHwUnit]->CCR3 = (uint32)DutyCycle;
+			break;
+		case PWM_CHANNEL4:
+			PwmTim[PwmTimHwUnit]->CCR4 = (uint32)DutyCycle;
+			break;
+		default:
+			break;
+	}
 }
 
-void Pwm_SetPeriodAndDuty(Pwm_TimHwUnitType PwmTimHwUnit,Pwm_ChannelType ChannelNumber, Pwm_PeriodType Period, uint16 DutyCyle){
+void Pwm_SetPeriodAndDuty(Pwm_TimHwUnitType PwmTimHwUnit,Pwm_ChannelType ChannelNumber, Pwm_PeriodType Period, uint16 DutyCycle){
 
+	PwmTim[PwmTimHwUnit]->ARR = (uint32)Period;
+	
+	switch(ChannelNumber){
+		case PWM_CHANNEL1:
+			PwmTim[PwmTimHwUnit]->CCR1 = (uint32)DutyCycle;
+			break;
+		case PWM_CHANNEL2:
+			PwmTim[PwmTimHwUnit]->CCR2 = (uint32)DutyCycle;
+			break;
+		case PWM_CHANNEL3:
+			PwmTim[PwmTimHwUnit]->CCR3 = (uint32)DutyCycle;
+			break;
+		case PWM_CHANNEL4:
+			PwmTim[PwmTimHwUnit]->CCR4 = (uint32)DutyCycle;
+			break;
+		default:
+			break;
+	}
 }
 
 static Std_ReturnType Pwm_ClockConfig(Pwm_TimHwUnitType PwmTimHwUnit,Pwm_ClkSrcType ClkSrc,Pwm_PrescType Presc){
