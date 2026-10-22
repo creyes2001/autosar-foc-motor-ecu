@@ -2,6 +2,8 @@
 
 #define PWM_1 (6U)
 #define PWM_2 (7U)
+#define TIM_CNT_CLK_MHZ 75U
+#define PERIOD_US 50U
 
 static Std_ReturnType Pwm_ClockConfig(Pwm_TimHwUnitType PwmTimHwUnit,Pwm_ClkSrcType ClkSrc,Pwm_PrescType Presc);
 static Std_ReturnType Pwm_SetCounterMode(Pwm_TimHwUnitType PwmTimHwUnit,Pwm_ModeType Mode,Pwm_EdgeNotificationType Notification);
@@ -9,6 +11,8 @@ static Std_ReturnType Pwm_SetUpdateRate(Pwm_TimHwUnitType PwmTimHwUnit,Pwm_Updat
 static Std_ReturnType Pwm_ChannelConfig(Pwm_TimHwUnitType PwmTimHwUnit,Pwm_NumberOfChannels NumberOfChannels, const Pwm_ChannelConfigType* ChannelConfig);
 
 static volatile TIM_TypeDef* PwmTim[2] = {TIM1,TIM8};
+
+static uint16 Period_us = 0;
 
 void Pwm_Init(const Pwm_ConfigType* ConfigPtr){
 
@@ -19,9 +23,13 @@ void Pwm_Init(const Pwm_ConfigType* ConfigPtr){
 	Pwm_SetUpdateRate(ConfigPtr->HwUnit,ConfigPtr->UpdateRate);
 	Pwm_ChannelConfig(ConfigPtr->HwUnit,ConfigPtr->NumberOfChannels,ConfigPtr->Pwm_ChannelConfig);
 	
+
+	Pwm_SetPeriodAndDuty(ConfigPtr->HwUnit,PWM_CHANNEL1,PERIOD_US,50); //DutyCycle 0-100%
+	Pwm_SetDutyCycle(ConfigPtr->HwUnit,PWM_CHANNEL2,90); 
+	Pwm_SetDutyCycle(ConfigPtr->HwUnit,PWM_CHANNEL3,60); 
+	
 	PwmTim[ConfigPtr->HwUnit]->EGR |= TIM_EGR_UG;	//set UG TIMxEGR to trasfer preload to shadow register manually
 	Pwm_Start(ConfigPtr->HwUnit);
-	Pwm_SetPeriodAndDuty(ConfigPtr->HwUnit,PWM_CHANNEL1,1875,400); //TEST,NOT COMMIT
 }
 void Pwm_Start(Pwm_TimHwUnitType PwmTimHwUnit){
 	if((PwmTim[PwmTimHwUnit]->CR1 & TIM_CR1_CEN) != 1U){
@@ -38,18 +46,20 @@ void Pwm_Stop(Pwm_TimHwUnitType PwmTimHwUnit){
 }
 
 void Pwm_SetDutyCycle(Pwm_TimHwUnitType PwmTimHwUnit,Pwm_ChannelType ChannelNumber,uint16 DutyCycle){
+
+	uint32 duty = ((uint32)Period_us*(uint32)DutyCycle)/100;
 	switch(ChannelNumber){
 		case PWM_CHANNEL1:
-			PwmTim[PwmTimHwUnit]->CCR1 = (uint32)DutyCycle;
+			PwmTim[PwmTimHwUnit]->CCR1 = duty;
 			break;
 		case PWM_CHANNEL2:
-			PwmTim[PwmTimHwUnit]->CCR2 = (uint32)DutyCycle;
+			PwmTim[PwmTimHwUnit]->CCR2 = duty;
 			break;
 		case PWM_CHANNEL3:
-			PwmTim[PwmTimHwUnit]->CCR3 = (uint32)DutyCycle;
+			PwmTim[PwmTimHwUnit]->CCR3 = duty;
 			break;
 		case PWM_CHANNEL4:
-			PwmTim[PwmTimHwUnit]->CCR4 = (uint32)DutyCycle;
+			PwmTim[PwmTimHwUnit]->CCR4 = duty;
 			break;
 		default:
 			break;
@@ -58,20 +68,23 @@ void Pwm_SetDutyCycle(Pwm_TimHwUnitType PwmTimHwUnit,Pwm_ChannelType ChannelNumb
 
 void Pwm_SetPeriodAndDuty(Pwm_TimHwUnitType PwmTimHwUnit,Pwm_ChannelType ChannelNumber, Pwm_PeriodType Period, uint16 DutyCycle){
 
-	PwmTim[PwmTimHwUnit]->ARR = (uint32)Period;
-	
+	uint32 period = (TIM_CNT_CLK_MHZ * Period) / 2; //For center aligned mode only
+	Period_us = period; //Global variable for set duty function
+	PwmTim[PwmTimHwUnit]->ARR = period;
+
+	uint32 duty = (period*(uint32)DutyCycle)/100;
 	switch(ChannelNumber){
 		case PWM_CHANNEL1:
-			PwmTim[PwmTimHwUnit]->CCR1 = (uint32)DutyCycle;
+			PwmTim[PwmTimHwUnit]->CCR1 = duty;
 			break;
 		case PWM_CHANNEL2:
-			PwmTim[PwmTimHwUnit]->CCR2 = (uint32)DutyCycle;
+			PwmTim[PwmTimHwUnit]->CCR2 = duty;
 			break;
 		case PWM_CHANNEL3:
-			PwmTim[PwmTimHwUnit]->CCR3 = (uint32)DutyCycle;
+			PwmTim[PwmTimHwUnit]->CCR3 = duty;
 			break;
 		case PWM_CHANNEL4:
-			PwmTim[PwmTimHwUnit]->CCR4 = (uint32)DutyCycle;
+			PwmTim[PwmTimHwUnit]->CCR4 = duty;
 			break;
 		default:
 			break;
