@@ -21,6 +21,7 @@ void Pwm_Init(const Pwm_ConfigType* ConfigPtr){
 	
 	PwmTim[ConfigPtr->HwUnit]->EGR |= TIM_EGR_UG;	//set UG TIMxEGR to trasfer preload to shadow register manually
 	Pwm_Start(ConfigPtr->HwUnit);
+	Pwm_SetPeriodAndDuty(ConfigPtr->HwUnit,PWM_CHANNEL1,1875,400); //TEST,NOT COMMIT
 }
 void Pwm_Start(Pwm_TimHwUnitType PwmTimHwUnit){
 	if((PwmTim[PwmTimHwUnit]->CR1 & TIM_CR1_CEN) != 1U){
@@ -141,10 +142,10 @@ static Std_ReturnType Pwm_SetUpdateRate(Pwm_TimHwUnitType PwmTimHwUnit,Pwm_Updat
 
 static Std_ReturnType Pwm_ChannelConfig(Pwm_TimHwUnitType PwmTimHwUnit,Pwm_NumberOfChannels NumberOfChannels, const Pwm_ChannelConfigType* ChannelConfig){
 
-	for(uint8 i =0; i <= NumberOfChannels; i++){
-		switch(ChannelConfig->ChannelId){
+	for(uint8 i =0; i < NumberOfChannels; i++){
+		switch(ChannelConfig[i].ChannelId){
 			case PWM_CHANNEL1:
-				PwmTim[PwmTimHwUnit]->CCMR1 &= ~(TIM_CCMR1_OC1M_Msk); //clear bitfield 
+				PwmTim[PwmTimHwUnit]->CCMR1 &= ~(TIM_CCMR1_OC1M_Msk); //clear bitfield
 				if(ChannelConfig->OutputMode == PWM_MODE_1){
 					PwmTim[PwmTimHwUnit]->CCMR1 |= (PWM_1 << TIM_CCMR1_OC1M_Pos); 
 				}
