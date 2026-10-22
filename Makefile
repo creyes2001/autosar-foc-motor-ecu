@@ -87,7 +87,7 @@ size:
 	$(SIZE) $(BUILD_DIR)/$(TARGET).elf
 
 flash: $(BIN_DIR)/$(TARGET).bin
-       openocd -f interface/stlink.cfg -f target/stm32g4x.cfg \
+	openocd -f interface/stlink.cfg -f target/stm32g4x.cfg \
       -c "program $(BIN_DIR)/$(TARGET).bin 0x08000000 verify reset exit"
 
 

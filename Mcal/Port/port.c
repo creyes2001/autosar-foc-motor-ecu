@@ -46,15 +46,14 @@ void Port_SetPinMode(Port_PinType Pin, Port_PinModeType Mode){
 	if(Mode <= PORT_PIN_MODE_AF15){
 		port->MODER |= (2 << (pin * 2));
 		
-		if(Mode <= PORT_PIN_MODE_AF7){
-			port->AFR[0] &= ~(15 << (Mode * 4)); 
-			port->AFR[0] |= (Mode << (Mode * 4)); 
+		if(pin <= PORT_A_PIN_7){
+			port->AFR[0] &= ~(15 << (pin * 4)); 
+			port->AFR[0] |= (Mode << (pin * 4)); 
 		}
 		else{
-			port->AFR[1] &= ~(15 << (Mode * 4)); 
-			port->AFR[1] |= (Mode << (Mode * 4)); 
+			port->AFR[1] &= ~(15 << ((pin - 8) * 4)); 
+			port->AFR[1] |= (Mode << ((pin - 8) * 4)); 
 		}
-
 	}
 
 	else{
