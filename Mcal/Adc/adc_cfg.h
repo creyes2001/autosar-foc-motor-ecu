@@ -114,7 +114,7 @@ typedef uint8 Adc_HWUnitType;
 #define ADC_CLK_PRESC_128 ((Adc_ClockPrescType)0x0A)
 #define ADC_CLK_PRESC_256 ((Adc_ClockPrescType)0x0B)
 
-typedef uint16 Adc_ValueGroupType;
+typedef uint32 Adc_ValueGroupType;
 typedef uint8 Adc_PrescaleType;
 typedef uint8 Adc_ConversionTimeType;
 typedef uint8 Adc_SamplingTimeType;
