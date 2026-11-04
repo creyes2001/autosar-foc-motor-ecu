@@ -64,10 +64,37 @@ const Port_ConfigDataType Port_CfgData[] = {
 		.Pin_OutputType = PORT_PIN_OUT_PUSH_PULL,
 		.Pin_ResistorType = PORT_PIN_RESISTOR_DISABLE,
 		.ModeChangable = FALSE
+	},
+	{
+		//PA1  ADC12_IN2 pin configuration 
+		.PinId = PORT_A_PIN_1,
+		.Pin_Mode = PORT_PIN_MODE_ANALOG,
+		.Pin_Direction = PORT_PIN_IN,
+		.DirectionChangable = FALSE,
+		.Pin_ResistorType = PORT_PIN_RESISTOR_DISABLE,
+		.ModeChangable = FALSE
+	},
+	{
+		//PB0  ADC12_IN5 pin configuration 
+		.PinId = PORT_B_PIN_0,
+		.Pin_Mode = PORT_PIN_MODE_ANALOG,
+		.Pin_Direction = PORT_PIN_IN,
+		.DirectionChangable = FALSE,
+		.Pin_ResistorType = PORT_PIN_RESISTOR_DISABLE,
+		.ModeChangable = FALSE
+	},
+	{
+		//PB1  ADC12_IN12 pin configuration 
+		.PinId = PORT_B_PIN_1,
+		.Pin_Mode = PORT_PIN_MODE_ANALOG,
+		.Pin_Direction = PORT_PIN_IN,
+		.DirectionChangable = FALSE,
+		.Pin_ResistorType = PORT_PIN_RESISTOR_DISABLE,
+		.ModeChangable = FALSE
 	}
 };
 
 const Port_ConfigType Port_Config = {
 	.Port_ConfigData = Port_CfgData,
-	.size = 5
+	.size = 8
 };
