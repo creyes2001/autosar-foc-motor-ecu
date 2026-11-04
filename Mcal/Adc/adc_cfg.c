@@ -1,8 +1,24 @@
 #include "adc_cfg.h"
 
 const Adc_ChannelConfigType Adc_ChannelConfig[] = {
-	{
+/*	{
 		.Channel = ADC1_CH8,
+		.InputMode = ADC_INPUT_SINGLE_ENDED,
+		.SamplingTime = ADC_47_5_CLOCK_CYCLES
+	}
+	*/
+	{
+		.Channel = ADC1_CH2,
+		.InputMode = ADC_INPUT_SINGLE_ENDED,
+		.SamplingTime = ADC_47_5_CLOCK_CYCLES
+	},
+	{
+		.Channel = ADC1_CH12,
+		.InputMode = ADC_INPUT_SINGLE_ENDED,
+		.SamplingTime = ADC_47_5_CLOCK_CYCLES
+	},
+	{
+		.Channel = ADC1_CH15,
 		.InputMode = ADC_INPUT_SINGLE_ENDED,
 		.SamplingTime = ADC_47_5_CLOCK_CYCLES
 	}
@@ -11,7 +27,7 @@ const Adc_ChannelConfigType Adc_ChannelConfig[] = {
 const Adc_GroupConfigType Adc_GroupConfig[] = {
 	{
 		.GroupType = ADC_GROUP1,
-		.NumberOfConversions = 1,
+		.NumberOfConversions = 3,
 		.ConversionType = ADC_INJECTED_CONVERSION,
 		.ValueGroup = 0,
 		.ConversionMode = ADC_CONV_MODE_ONESHOT,
