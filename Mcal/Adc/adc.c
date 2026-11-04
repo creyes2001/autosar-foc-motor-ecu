@@ -95,31 +95,33 @@ void Adc_StopGroupConversion (Adc_GroupType Group){
 }
 
 Std_ReturnType Adc_ReadGroup (Adc_GroupType Group,Adc_ValueGroupType* DataBufferPtr){
-	static volatile uint8 i = 0;
+//	static volatile uint8 i = 0;
 	if(Adc_Data[Group]->Adc_GroupConfig[Group].ConversionType ==  ADC_REGULAR_CONVERSION){
-		DataBufferPtr[i] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->DR;
+/*		DataBufferPtr[i] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->DR;
 		i++;
 		if(HW_Unit[Adc_Data[Group]->Adc_HWUnit]->ISR && ADC_ISR_EOS){ //end of sequence of conversions
 			HW_Unit[Adc_Data[Group]->Adc_HWUnit]->ISR |= ADC_ISR_EOS;
 			i = 0;
-		}
+		}*/
 	}
 	else if(Adc_Data[Group]->Adc_GroupConfig[Group].ConversionType == ADC_INJECTED_CONVERSION){
-		switch(Adc_Data[Group]->Adc_GroupConfig[Group].NumberOfConversions){
-			case 1U:
-				DataBufferPtr[0] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->JDR1;
-				break;
-			case 2U:
-				DataBufferPtr[1] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->JDR1;
-				break;
-			case 3U:
-				DataBufferPtr[2] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->JDR1;
-				break;
-			case 4U:
-				DataBufferPtr[3] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->JDR1;
-				break;
-			default:
-				break;
+		for(uint8 i = 0; i < Adc_Data[Group]->Adc_GroupConfig[Group].NumberOfConversions; i++){
+			switch(i + 1){
+				case 1U:
+					DataBufferPtr[0] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->JDR1;
+					break;
+				case 2U:
+					DataBufferPtr[1] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->JDR2;
+					break;
+				case 3U:
+					DataBufferPtr[2] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->JDR3;
+					break;
+				case 4U:
+					DataBufferPtr[3] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->JDR4;
+					break;
+				default:
+					break;
+			}
 		}
 
 	}
