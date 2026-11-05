@@ -7,8 +7,8 @@
 typedef uint8 Gpt_ChannelType;
 typedef uint8 Gpt_TimHwUnitType;
  
-#define PWM_TIM1 ((Gpt_TimHwUnitType)0x00)
-#define PWM_TIM8 ((Gpt_TimHwUnitType)0x01)
+#define GPT_TIM1 ((Gpt_TimHwUnitType)0x00)
+#define GPT_TIM8 ((Gpt_TimHwUnitType)0x01)
 
 #define GPT_CHANNEL_1 ((Gpt_ChannelType)0x00)
 #define GPT_CHANNEL_2 ((Gpt_ChannelType)0x01)
@@ -38,5 +38,5 @@ typedef struct{
 	uint8 size;
 }Gpt_ConfigType;
 
-
+extern const Gpt_ConfigType GptConfig;
 #endif //GPT_CFG_H
