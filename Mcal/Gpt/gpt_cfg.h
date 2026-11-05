@@ -10,10 +10,11 @@ typedef uint8 Gpt_TimHwUnitType;
 #define PWM_TIM1 ((Gpt_TimHwUnitType)0x00)
 #define PWM_TIM8 ((Gpt_TimHwUnitType)0x01)
 
-typedef enum{
-	GPT_TRIGGER_ACTIVE_HIGH = 0x00,
-	GPT_TRIGGER_ACTIVE_LOW = 0x01,
-}Gpt_HwTriggerPolarityType;
+#define GPT_CHANNEL_1 ((Gpt_ChannelType)0x00)
+#define GPT_CHANNEL_2 ((Gpt_ChannelType)0x01)
+#define GPT_CHANNEL_3 ((Gpt_ChannelType)0x02)
+#define GPT_CHANNEL_4 ((Gpt_ChannelType)0x03)
+
 
 typedef enum{
 	GPT_CH_FROZEN = 0x00,
@@ -30,12 +31,11 @@ typedef struct{
 	Gpt_ChannelType ChannelId;
 	Gpt_TimHwUnitType HwUnit;
 	Gpt_ChannelModeType Mode;
-	Gpt_HwTriggerPolarityType Polarity;
 }Gpt_HwTriggerConfigType;
 
 typedef struct{
 	const Gpt_HwTriggerConfigType* HwTriggerConfig;
-
+	uint8 size;
 }Gpt_ConfigType;
 
 
