@@ -7,7 +7,7 @@ static volatile TIM_TypeDef* GptTim[2] = {TIM1,TIM2};
 
 void Gpt_Init(const Gpt_ConfigType* ConfigPtr){
 	for(uint8 i = 0; i < ConfigPtr->size; i++){
-		Gpt_ChannelConfig(ConfigPtr->HwTriggerConfig[i].HwUnit, ConfigPtr->HwTriggerConfig[i].Channel, ConfigPtr->HwTriggerConfig[i].Mode);
+		Gpt_ChannelConfig(ConfigPtr->HwTriggerConfig[i].HwUnit, ConfigPtr->HwTriggerConfig[i].ChannelId, ConfigPtr->HwTriggerConfig[i].Mode);
 	}
 }
 
@@ -27,24 +27,24 @@ static Std_ReturnType Gpt_ChannelConfig(Gpt_TimHwUnitType HwUnit, Gpt_ChannelTyp
 		
 	switch(Channel){
 	
-		case GPT_CHANNEL1:
+		case GPT_CHANNEL_1:
 			//TODO:implement
 			break;
 	
-		case GPT_CHANNEL2:
+		case GPT_CHANNEL_2:
 			//TODO:implement
 			break;
 	
-		case GPT_CHANNEL3:
+		case GPT_CHANNEL_3:
 			//TODO:implement
 			break;
 	
-		case GPT_CHANNEL4:
-			Gpt_Tim[HwUnit]->CCMR2 &= ~(TIM_CCMR2_OC4M_Msk); //Clear bitfield
-			Gpt_Tim[HwUnit]->CCMR2 |= (Mode << TIM_CCMR2_OC4M_Msk);
-			Gpt_Tim[HwUnit]->CCMR2 |= TIM_CCMR2_OC4PE; //enable preload
-			Gpt_Tim[HwUnit]->CCER |= TIM_CCER_CC4E; //enable
-			Gpt_Tim[HwUnit]->CCER &= ~TIM_CCER_CC4NE; //disable
+		case GPT_CHANNEL_4:
+			GptTim[HwUnit]->CCMR2 &= ~(TIM_CCMR2_OC4M_Msk); //Clear bitfield
+			GptTim[HwUnit]->CCMR2 |= (Mode << TIM_CCMR2_OC4M_Pos);
+			GptTim[HwUnit]->CCMR2 |= TIM_CCMR2_OC4PE; //enable preload
+			GptTim[HwUnit]->CCER |= TIM_CCER_CC4E; //enable
+			GptTim[HwUnit]->CCER &= ~TIM_CCER_CC4NE; //disable
 
 			break;
 	
