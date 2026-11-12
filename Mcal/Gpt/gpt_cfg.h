@@ -38,5 +38,5 @@ typedef struct{
 	uint8 size;
 }Gpt_ConfigType;
 
-extern const Gpt_ConfigType GptConfig;
+extern const Gpt_ConfigType Gpt_Config;
 #endif //GPT_CFG_H
