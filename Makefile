@@ -32,10 +32,12 @@ SOURCES = main.c\
 		  Mcal/Port/port_cfg.c\
 		  Mcal/Adc/adc.c\
 		  Mcal/Adc/adc_cfg.c\
+		  Mcal/Adc/adc_irq.c\
 		  Mcal/Pwm/pwm.c\
 		  Mcal/Pwm/pwm_cfg.c\
 		  Mcal/Gpt/gpt.c\
 		  Mcal/Gpt/gpt_cfg.c\
+		  Mcal/Gpt/gpt_irq.c\
 		  $(STM_STARTUP_DIR)/system_stm32g4xx.c
  
 ASM_SRCS = $(STM_STARTUP_DIR)/startup_stm32g431xx.s\
