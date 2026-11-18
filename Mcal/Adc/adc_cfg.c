@@ -1,26 +1,20 @@
 #include "adc_cfg.h"
 
-const Adc_ChannelConfigType Adc_ChannelConfig[] = {
-/*	{
-		.Channel = ADC1_CH8,
-		.InputMode = ADC_INPUT_SINGLE_ENDED,
-		.SamplingTime = ADC_47_5_CLOCK_CYCLES
-	}
-	*/
+const Adc_ChannelConfigType Adc_ChannelConfig[] = {	
 	{
 		.Channel = ADC1_CH2,
 		.InputMode = ADC_INPUT_SINGLE_ENDED,
-		.SamplingTime = ADC_47_5_CLOCK_CYCLES
+		.SamplingTime = ADC_6_5_CLOCK_CYCLES
 	},
 	{
 		.Channel = ADC1_CH12,
 		.InputMode = ADC_INPUT_SINGLE_ENDED,
-		.SamplingTime = ADC_47_5_CLOCK_CYCLES
+		.SamplingTime = ADC_6_5_CLOCK_CYCLES
 	},
 	{
 		.Channel = ADC1_CH15,
 		.InputMode = ADC_INPUT_SINGLE_ENDED,
-		.SamplingTime = ADC_47_5_CLOCK_CYCLES
+		.SamplingTime = ADC_6_5_CLOCK_CYCLES
 	}
 };
 
@@ -31,9 +25,9 @@ const Adc_GroupConfigType Adc_GroupConfig[] = {
 		.ConversionType = ADC_INJECTED_CONVERSION,
 		.ValueGroup = 0,
 		.ConversionMode = ADC_CONV_MODE_ONESHOT,
-		.TriggerSource = ADC_TRIGG_SRC_SW,
+		.TriggerSource = ADC_TRIGG_SRC_HW,
 		.HwTriggerSignal = ADC_HW_TRIG_RISING_EDGE,
-		.HwTriggerSrc = ADC_EXT_TRG,
+		.HwTriggerSrc = ADC_EXT_TRG1,
 		.GroupAccessMode = ADC_ACCESS_MODE_SINGLE,
 		.Adc_ChannelConfig = Adc_ChannelConfig
 	}
