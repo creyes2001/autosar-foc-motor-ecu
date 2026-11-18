@@ -2,6 +2,7 @@
 #define ADC_H
 
 #include "adc_cfg.h"
+#include "adc_irq.h"
 #include "stm32g431xx.h"
 
 void Adc_Init (const Adc_ConfigType* ConfigPtr);
