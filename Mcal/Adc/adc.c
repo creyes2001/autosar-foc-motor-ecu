@@ -25,6 +25,7 @@ static Std_ReturnType Adc_CLockSourceConfig(Adc_ClockSrcType ClkSrc, Adc_ClockPr
 static volatile ADC_TypeDef* const HW_Unit[2] = {ADC1,ADC2}; //to get the CMSIS definition
 static const Adc_ConfigDataType* Adc_Data[MAX_ADC_GROUPS];//to hold the ConfigData struct pointer
 
+
 void Adc_Init (const Adc_ConfigType* ConfigPtr){
 	for(uint8 i = 0; i < ConfigPtr->size; i++){	
 		
@@ -105,25 +106,13 @@ Std_ReturnType Adc_ReadGroup (Adc_GroupType Group,Adc_ValueGroupType* DataBuffer
 		}*/
 	}
 	else if(Adc_Data[Group]->Adc_GroupConfig[Group].ConversionType == ADC_INJECTED_CONVERSION){
-		for(uint8 i = 0; i < Adc_Data[Group]->Adc_GroupConfig[Group].NumberOfConversions; i++){
-			switch(i + 1){
-				case 1U:
-					DataBufferPtr[0] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->JDR1;
-					break;
-				case 2U:
-					DataBufferPtr[1] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->JDR2;
-					break;
-				case 3U:
-					DataBufferPtr[2] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->JDR3;
-					break;
-				case 4U:
-					DataBufferPtr[3] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->JDR4;
-					break;
-				default:
-					break;
-			}
-		}
+		const uint8 n = Adc_Data[Group]->Adc_GroupConfig[Group].NumberOfConversions;
 
+		if(n > 0U) { DataBufferPtr[0] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->JDR1; }
+		if(n > 1U) { DataBufferPtr[1] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->JDR2; }
+		if(n > 2U) { DataBufferPtr[2] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->JDR3; }
+		if(n > 3U) { DataBufferPtr[3] = HW_Unit[Adc_Data[Group]->Adc_HWUnit]->JDR4; }
+		if(n > 4U) { return E_NOT_OK; }
 	}
 	else{
 		return E_NOT_OK;
@@ -335,7 +324,7 @@ static Std_ReturnType Adc_SetGroupChannels(Adc_HWUnitType HWUnit,Adc_ConversionT
 		}
 		else if(Conversion == ADC_INJECTED_CONVERSION){
 			HW_Unit[HWUnit]->JSQR &= ~ADC_JSQR_JL;
-			HW_Unit[HWUnit]->JSQR |= (NumberOfConversions << ADC_JSQR_JL_Pos);
+			HW_Unit[HWUnit]->JSQR |= ((NumberOfConversions - 1) << ADC_JSQR_JL_Pos);
 			
 			for(uint8 i = 0U; i < NumberOfConversions; i++){
 				HW_Unit[HWUnit]->JSQR |= (ChannelConfig[i].Channel << (ADC_JSQR_JSQ1_Pos + (i*6)));
