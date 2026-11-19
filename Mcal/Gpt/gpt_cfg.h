@@ -15,6 +15,11 @@ typedef uint8 Gpt_TimHwUnitType;
 #define GPT_CHANNEL_3 ((Gpt_ChannelType)0x02)
 #define GPT_CHANNEL_4 ((Gpt_ChannelType)0x03)
 
+typedef enum{
+	GPT_INTERRUPTS_ENABLE = 0x00,
+	GPT_INTERRUPTS_DISABLE = 0x01
+}Gpt_InterruptsType;
+
 
 typedef enum{
 	GPT_CH_FROZEN = 0x00,
@@ -35,6 +40,7 @@ typedef struct{
 
 typedef struct{
 	const Gpt_HwTriggerConfigType* HwTriggerConfig;
+	Gpt_InterruptsType Interrupts;
 	uint8 size;
 }Gpt_ConfigType;
 

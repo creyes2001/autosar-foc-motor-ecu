@@ -14,6 +14,11 @@ static Std_ReturnType Gpt_ChannelConfig(Gpt_TimHwUnitType HwUnit, Gpt_ChannelTyp
 static volatile TIM_TypeDef* GptTim[2] = {TIM1,TIM2};
 
 void Gpt_Init(const Gpt_ConfigType* ConfigPtr){
+
+	if(ConfigPtr->Interrupts == GPT_INTERRUPTS_ENABLE){
+		Gpt_InterruptsEnable();
+	}
+
 	for(uint8 i = 0; i < ConfigPtr->size; i++){
 		Gpt_ChannelConfig(ConfigPtr->HwTriggerConfig[i].HwUnit, ConfigPtr->HwTriggerConfig[i].ChannelId, ConfigPtr->HwTriggerConfig[i].Mode);
 		Gpt_SetTriggerCompare(ConfigPtr->HwTriggerConfig[i].ChannelId,50U);

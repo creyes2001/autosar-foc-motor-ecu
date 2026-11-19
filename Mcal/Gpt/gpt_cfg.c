@@ -10,5 +10,6 @@ const Gpt_HwTriggerConfigType GptChannelConfig [] = {
 
 const Gpt_ConfigType Gpt_Config = {
 	.HwTriggerConfig = GptChannelConfig,
+	.Interrupts = GPT_INTERRUPTS_ENABLE,
 	.size = 1
 };
