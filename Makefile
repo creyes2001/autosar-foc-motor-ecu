@@ -14,6 +14,7 @@ INCLUDE_DIRS = $(STM_INCLUDE_DIR)\
 			   ./Mcal/Adc\
 			   ./Mcal/Pwm\
 			   ./Mcal/Gpt\
+			   ./Platform/Nvic\
 			   ./Common
  
 #=====================TOOLCHAIN=================================
@@ -38,6 +39,7 @@ SOURCES = main.c\
 		  Mcal/Gpt/gpt.c\
 		  Mcal/Gpt/gpt_cfg.c\
 		  Mcal/Gpt/gpt_irq.c\
+		  Platform/Nvic/nvic.c\
 		  $(STM_STARTUP_DIR)/system_stm32g4xx.c
  
 ASM_SRCS = $(STM_STARTUP_DIR)/startup_stm32g431xx.s\
@@ -48,7 +50,8 @@ vpath %.c . \
 	Mcal/Port\
 	Mcal/Adc\
 	Mcal/Pwm\
-	Mcal/Gpt
+	Mcal/Gpt\
+	Platform/Nvic
 
 C_OBJS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(notdir $(SOURCES)))
 ASM_OBJS = $(patsubst %.s,$(OBJ_DIR)/%.o,$(notdir $(ASM_SRCS)))
