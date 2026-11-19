@@ -127,6 +127,11 @@ typedef uint8 Adc_HwTriggSrcType;
 typedef uint8 Adc_ClockPrescType;
 
 typedef enum{
+	ADC_INTERRUPTS_ENABLE = 0x00,
+	ADC_INTERRUPTS_DISABLE = 0x01
+}Adc_InterruptsType;
+
+typedef enum{
 	ADC_INPUT_SINGLE_ENDED = 0x00,
 	ADC_INPUT_DIFFERENTIAL = 0x01
 }Adc_InputModeType;
@@ -228,6 +233,7 @@ typedef struct{
 	const Adc_ConfigDataType* Adc_ConfigData; 
 	Adc_ClockSrcType Adc_ClkSrc;
 	Adc_ClockPrescType Adc_Presc;
+	Adc_InterruptsType Adc_Interrupts;
 	uint8 size;
 }Adc_ConfigType;
 

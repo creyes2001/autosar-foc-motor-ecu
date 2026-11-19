@@ -27,6 +27,11 @@ static const Adc_ConfigDataType* Adc_Data[MAX_ADC_GROUPS];//to hold the ConfigDa
 
 
 void Adc_Init (const Adc_ConfigType* ConfigPtr){
+
+	if(ConfigPtr->Adc_Interrupts == ADC_INTERRUPTS_ENABLE){
+		Adc_InterruptsEnable();
+	}
+
 	for(uint8 i = 0; i < ConfigPtr->size; i++){	
 		
 		const Adc_ConfigDataType* ConfigData = &ConfigPtr->Adc_ConfigData[i];
