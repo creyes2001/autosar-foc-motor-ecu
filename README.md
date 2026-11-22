@@ -21,6 +21,7 @@ FOC motor control for a BLDC/PMSM motor, built on an AUTOSAR-inspired layered ar
 - [ ] FOC control loop
 
 ## Project structure
+```
 .
 ├── Application/         # Application layer (planned)
 ├── Bsw/
@@ -45,6 +46,8 @@ FOC motor control for a BLDC/PMSM motor, built on an AUTOSAR-inspired layered ar
 ├── main.c
 ├── Makefile
 └── STM32G431.svd        # Register description for debugging
+
+```
 
 ## Build
 
