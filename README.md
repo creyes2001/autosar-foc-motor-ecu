@@ -42,6 +42,9 @@ FOC motor control for a BLDC/PMSM motor, built on an AUTOSAR-inspired layered ar
 │   ├── startup_stm32g431xx.s
 │   ├── STM32G431RBTX_FLASH.ld
 │   └── system_stm32g4xx.c
+├── docs/
+│   └──configuration.md # Peripheral configuration and ADC trigger timing
+│    
 ├── Rte/                 # Runtime environment (planned)
 ├── main.c
 ├── Makefile
@@ -61,6 +64,8 @@ FOC motor control for a BLDC/PMSM motor, built on an AUTOSAR-inspired layered ar
 | APB2 (TIM1) | HCLK, timer clock | 75 MHz | PWM, ADC trigger |
 | ADC1 | HCLK / 2 (CKMODE=10) | 37.5 MHz | Current sensing |
 | I2C (AS5600) | **TBD** | **TBD** | Encoder readings |
+
+[Peripheral configuration details](docs/configuration.md)
 
 ## Build
 
