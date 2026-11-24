@@ -14,6 +14,7 @@ INCLUDE_DIRS = $(STM_INCLUDE_DIR)\
 			   ./Mcal/Adc\
 			   ./Mcal/Pwm\
 			   ./Mcal/Gpt\
+			   ./Mcal/I2c\
 			   ./Platform/Nvic\
 			   ./Common
  
@@ -39,6 +40,9 @@ SOURCES = main.c\
 		  Mcal/Gpt/gpt.c\
 		  Mcal/Gpt/gpt_cfg.c\
 		  Mcal/Gpt/gpt_irq.c\
+		  Mcal/I2c/i2c.c\
+		  Mcal/I2c/i2c_cfg.c\
+		  Mcal/I2c/i2c_irq.c\
 		  Platform/Nvic/nvic.c\
 		  $(STM_STARTUP_DIR)/system_stm32g4xx.c
  
@@ -51,6 +55,7 @@ vpath %.c . \
 	Mcal/Adc\
 	Mcal/Pwm\
 	Mcal/Gpt\
+	Mcal/I2c\
 	Platform/Nvic
 
 C_OBJS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(notdir $(SOURCES)))
