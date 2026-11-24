@@ -27,7 +27,7 @@ const Pwm_ConfigType Pwm_Config = {
 	.Period = 1875,
 	.Mode = PWM_CENTER_ALIGNED,
 	.UpdateRate = PWM_UPDATE1, //Repetitio counter
-	.EdgeNotification = PWM_BOTH_EDGES,
+	.EdgeNotification = PWM_RISING_EDGE,
 	.NumberOfChannels = 3,
 	.Pwm_ChannelConfig = ChannelConfig
 };
