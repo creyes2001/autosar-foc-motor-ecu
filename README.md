@@ -49,6 +49,19 @@ FOC motor control for a BLDC/PMSM motor, built on an AUTOSAR-inspired layered ar
 
 ```
 
+## System configuration
+
+## Clock Configuration
+
+| Domain | Source | Frequency | Used by |
+|---|---|---|---|
+| HSE | External crystal | 24 MHz | PLL input |
+| SYSCLK | HSE → PLL | 150 MHz | CPU core |
+| HCLK (AHB) | SYSCLK / 2 | 75 MHz | Core bus, DMA, SysTick |
+| APB2 (TIM1) | HCLK, timer clock | 75 MHz | PWM, ADC trigger |
+| ADC1 | HCLK / 2 (CKMODE=10) | 37.5 MHz | Current sensing |
+| I2C (AS5600) | **TBD** | **TBD** | Encoder readings |
+
 ## Build
 
 ### Requirements
@@ -58,7 +71,10 @@ FOC motor control for a BLDC/PMSM motor, built on an AUTOSAR-inspired layered ar
 - ST-Link (built into the Nucleo-G431RB)
 
 ### Commands
+```
 make            # build, output in build/
 make flash      # flash through OpenOCD
 make clean
+
+```
 
